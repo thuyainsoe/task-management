@@ -107,6 +107,17 @@ export default {
 
     .side-bar-header {
       font-size: 20px;
+      position: relative;
+      width: max-content;
+      &::before {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        right: 0;
+        width: 50%;
+        height: 3px;
+        background-color: $red-color;
+      }
     }
 
     .side-bar-lists {
@@ -134,6 +145,7 @@ export default {
             padding: 10px;
             width: calc(100% + 10px);
             background-color: $gray-color;
+            border-left: 2px solid $red-color;
           }
         }
       }

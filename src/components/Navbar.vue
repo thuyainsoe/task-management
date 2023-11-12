@@ -130,7 +130,7 @@ export default {
 
             .noti-count {
                 position: absolute;
-                background: $red-color;
+                background: red;
                 width: 10px;
                 height: 10px;
                 display: flex;

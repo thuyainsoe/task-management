@@ -1,6 +1,6 @@
 <template>
     <div class="task-table-container">
-        <el-table :data="duplicatedTableData" style="width: 100%; height: 100%" :border="true" :scrollbar-always-on="true"
+        <el-table :data="tableData" style="width: 100%; height: 100%" :border="true" :scrollbar-always-on="true"
             class="data-table">
             <el-table-column type='selection' width='40'></el-table-column>
             <el-table-column v-for="(tableColumn, index) in tableColumns" :key="index" :fixed="tableColumn.fixed"
@@ -18,10 +18,30 @@
                         <span>{{ scope.row.department }}</span>
                     </div>
                     <div v-else-if="tableColumn.property === 'status'" class="table-data-status">
-                        <span class="in">{{ scope.row.status }}</span>
+                        <el-select v-model="scope.row.status" :class="getStatusClass(scope.row.status)"
+                            class="m-2 status-selector" placeholder="Select">
+                            <el-option v-for="item in statusOptions" :key="item.value" :value="item.value"
+                                :label="item.label" :class="item.class" />
+                        </el-select>
+                        <div class="label-show">
+                            <span v-if="scope.row.status === 'in progress'" class="in-progress">{{ scope.row.status
+                            }}</span>
+                            <span v-else-if="scope.row.status === 'started'" class="started">{{ scope.row.status }}</span>
+                            <span v-else-if="scope.row.status === 'completed'" class="completed">{{ scope.row.status
+                            }}</span>
+                        </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'priority'" class="table-data-priority">
-                        <span class="in">{{ scope.row.priority }}</span>
+                        <el-select v-model="scope.row.priority" :class="getStatusClass(scope.row.status)"
+                            class="m-2 status-selector" placeholder="Select">
+                            <el-option v-for="item in priorityOptions" :key="item.value" :value="item.value"
+                                :label="item.label" :class="item.class" />
+                        </el-select>
+                        <div class="label-show">
+                            <span v-if="scope.row.priority === 'high'" class="high">{{ scope.row.priority }}</span>
+                            <span v-else-if="scope.row.priority === 'low'" class="low">{{ scope.row.priority }}</span>
+                            <span v-else-if="scope.row.priority === 'medium'" class="medium">{{ scope.row.priority }}</span>
+                        </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'deadlines'" class="table-data-deadlines">
                         <el-date-picker class="deadlines-calendar" v-model="scope.row.deadlines" type="date"
@@ -82,6 +102,21 @@ export default {
                         department: 'Adminstration'
                     }
                 },
+                {
+                    content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque, molestias.',
+                    name: 'Kyaw Myo Htun',
+                    status: 'completed',
+                    position: 'Frontend Developer',
+                    priority: 'low',
+                    department: 'IT',
+                    deadlines: '2023-2-10',
+                    tags: ['Meetings', 'Interviews', 'Club'],
+                    assigned_by: {
+                        name: 'Kyaw Min Tun',
+                        position: 'Human Resource',
+                        department: 'Adminstration'
+                    }
+                },
             ],
             tableColumns: [
                 {
@@ -125,16 +160,55 @@ export default {
                     property: 'assigned_by',
                     width: 200,
                 },
-            ]
+            ],
+            statusOptions: [
+                {
+                    label: 'In Progress',
+                    value: 'in progress',
+                    class: 'in_progress'
+                },
+                {
+                    label: 'Started',
+                    value: 'started',
+                    class: 'started'
+                },
+                {
+                    label: 'Completed',
+                    value: 'completed',
+                    class: 'completed'
+                },
+            ],
+            priorityOptions: [
+                {
+                    label: 'High',
+                    value: 'high',
+                    class: 'high'
+                },
+                {
+                    label: 'Low',
+                    value: 'low',
+                    class: 'low'
+                },
+                {
+                    label: 'Medium',
+                    value: 'medium',
+                    class: 'medium'
+                },
+            ],
         }
     },
     computed: {
-        duplicatedTableData() {
-            return Array.from({ length: 20 }, (_, index) => {
-                const newItem = { ...this.tableData[0] };
-                newItem.id = index + 1;
-                return newItem;
-            });
+        getStatusClass() {
+            return (status) => {
+                if (status === 'in_progress') {
+                    return 'in-progress';
+                } else if (status === 'completed') {
+                    return 'completed';
+                } else if (status === 'started') {
+                    return 'started';
+                }
+                return '';
+            };
         },
     },
     methods: {
@@ -148,6 +222,8 @@ export default {
 
 <style lang="scss">
 @import '../assets/main.scss';
+@import '../assets/scss/status.scss';
+@import '../assets/scss/priority.scss';
 
 .task-table-container {
     height: 100%;
@@ -189,23 +265,126 @@ export default {
         }
 
         .table-data-status {
-            span {
-                background: rgb(228, 228, 10);
-                padding: 5px 10px;
-                border-radius: 5px;
-                color: #fff;
-                // font-size: 12px;
-                text-transform: capitalize;
+            position: relative;
+
+            .label-show {
+                span {
+                    position: absolute;
+                    top: 5px;
+                    left: 10px;
+                    width: 100px;
+                    height: 25px;
+                    color: #fff;
+                    text-transform: capitalize;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 5px;
+                    z-index: 800;
+                    padding: 3px 7px;
+                }
+
+                .in-progress {
+                    background-color: #faa919;
+                }
+
+                .started {
+                    background-color: red;
+                }
+
+                .completed {
+                    background-color: green;
+                }
+            }
+
+            .el-select.status-selector {
+                width: 140px;
+
+                .select-trigger.el-tooltip__trigger {
+                    .el-input.el-input--suffix {
+                        box-shadow: none;
+                        
+                        .el-input__wrapper {
+                            box-shadow: none;
+                            background-color: transparent;
+
+                            input.el-input__inner {
+                                text-align: center;
+                                text-transform: capitalize;
+                                color: #fff;
+                                border-radius: 5px;
+                                font-size: 12px;
+                            }
+                        }
+
+                        .el-input__wrapper.is-focus {
+                            box-shadow: none !important;
+                            background-color: transparent !important;
+                        }
+                    }
+                }
             }
         }
 
         .table-data-priority {
-            span {
-                background: red;
-                padding: 5px 10px;
-                border-radius: 5px;
-                color: #fff;
-                text-transform: capitalize;
+            position: relative;
+
+            .label-show {
+                span {
+                    position: absolute;
+                    top: 5px;
+                    left: 10px;
+                    width: 70px;
+                    height: 25px;
+                    color: #fff;
+                    text-transform: capitalize;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 5px;
+                    z-index: 800;
+                    padding: 3px 7px;
+                }
+
+                .high {
+                    background-color: red;
+                }
+
+                .low {
+                    background-color: #faa919;
+                }
+
+                .medium {
+                    background-color: green;
+                }
+            }
+
+            .el-select.status-selector {
+                width: 140px;
+
+                .select-trigger.el-tooltip__trigger {
+                    .el-input.el-input--suffix {
+                        box-shadow: none;
+
+                        .el-input__wrapper {
+                            box-shadow: none;
+                            background-color: transparent;
+
+                            input.el-input__inner {
+                                text-align: center;
+                                text-transform: capitalize;
+                                color: #fff;
+                                border-radius: 5px;
+                                font-size: 12px;
+                            }
+                        }
+
+                        .el-input__wrapper.is-focus {
+                            box-shadow: none !important;
+                            background-color: transparent !important;
+                        }
+                    }
+                }
             }
         }
 
@@ -233,6 +412,7 @@ export default {
         justify-content: center;
         align-items: center;
         gap: 20px;
+
         img {
             width: 60px;
             height: 60px;
@@ -245,10 +425,11 @@ export default {
             font-size: 18px;
         }
 
-        .assigned-by-detail-position,.assigned-by-detail-department {
+        .assigned-by-detail-position,
+        .assigned-by-detail-department {
             font-size: 14px;
-            font-weight: 600;
-        } 
+            font-weight: 500;
+        }
     }
 }
 </style>

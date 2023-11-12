@@ -1,0 +1,69 @@
+.el-select-dropdown__item.in_progress {
+  background: #faa919;
+  color: #fff;
+}
+
+.el-select-dropdown__item.in_progress.selected {
+  color: #fff;
+  font-weight: normal;
+}
+
+.el-select-dropdown__item.in_progress.selected.hover {
+  background-color: #faa919;
+
+  &:hover {
+    background-color: #faa919;
+  }
+}
+
+.el-select-dropdown__item.in_progress.hover {
+    background-color: #faa919;
+  }
+
+// This is completed stage
+
+.el-select-dropdown__item.completed {
+  background: green;
+  color: #fff;
+}
+
+.el-select-dropdown__item.completed.selected {
+  color: #fff;
+  font-weight: normal;
+}
+
+.el-select-dropdown__item.completed.selected.hover {
+  background-color: green;
+
+  &:hover {
+    background-color: green;
+  }
+}
+
+.el-select-dropdown__item.completed.hover {
+  background-color: green;
+}
+
+// This is stared stage
+
+.el-select-dropdown__item.started {
+  background: red;
+  color: #fff;
+}
+
+.el-select-dropdown__item.started.selected {
+    color: #fff;
+    font-weight: normal;
+  }
+  
+  .el-select-dropdown__item.started.selected.hover {
+    background-color: red;
+  
+    &:hover {
+      background-color: red;
+    }
+  }
+  
+  .el-select-dropdown__item.started.hover {
+    background-color: red;
+  }

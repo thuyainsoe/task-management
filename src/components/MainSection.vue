@@ -93,7 +93,7 @@ export default {
                 .el-button.new-item {
                     display: flex;
                     gap: 8px;
-                    background-color: $yellow-color;
+                    background-color: $blue-color;
                     border: none;
 
                     img {

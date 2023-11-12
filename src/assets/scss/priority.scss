@@ -1,0 +1,70 @@
+.el-select-dropdown__item.low {
+    background: #faa919;
+    color: #fff;
+  }
+  
+  .el-select-dropdown__item.low.selected {
+    color: #fff;
+    font-weight: normal;
+  }
+  
+  .el-select-dropdown__item.low.selected.hover {
+    background-color: #faa919;
+  
+    &:hover {
+      background-color: #faa919;
+    }
+  }
+  
+  .el-select-dropdown__item.low.hover {
+      background-color: #faa919;
+    }
+  
+  // This is medium stage
+  
+  .el-select-dropdown__item.medium {
+    background: green;
+    color: #fff;
+  }
+  
+  .el-select-dropdown__item.medium.selected {
+    color: #fff;
+    font-weight: normal;
+  }
+  
+  .el-select-dropdown__item.medium.selected.hover {
+    background-color: green;
+  
+    &:hover {
+      background-color: green;
+    }
+  }
+  
+  .el-select-dropdown__item.medium.hover {
+    background-color: green;
+  }
+  
+  // This is stared stage
+  
+  .el-select-dropdown__item.high {
+    background: red;
+    color: #fff;
+  }
+  
+  .el-select-dropdown__item.high.selected {
+      color: #fff;
+      font-weight: normal;
+    }
+    
+    .el-select-dropdown__item.high.selected.hover {
+      background-color: red;
+    
+      &:hover {
+        background-color: red;
+      }
+    }
+    
+    .el-select-dropdown__item.high.hover {
+      background-color: red;
+    }
+  

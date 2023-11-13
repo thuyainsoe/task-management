@@ -25,20 +25,24 @@ const router = createRouter({
   ]
 })
 
-const isAuthenticated = () => {
-  const token = localStorage.getItem('token') 
-  return token !== null && token !== 'undefined'
-}
+// const isAuthenticated = () => {
+//   const itemString = localStorage.getItem('token')
+//   if (!itemString) return null
+//   const item = JSON.parse(itemString)
+//   const currentTime = new Date().getTime()
+//   if (currentTime > item.expiration) {
+//     localStorage.removeItem('token')
+//     return null
+//   }
+//   return item.token !== null && item.token !== 'undefined'
+// }
 
-// Global navigation guard
-router.beforeEach((to, from, next) => {
-  if (to.matched.some((route) => route.meta.requiresAuth) && !isAuthenticated()) {
-    // Redirect to the login page if the route requires authentication and the user is not authenticated
-    next('/login')
-  } else {
-    // Continue to the requested route
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some((route) => route.meta.requiresAuth) && !isAuthenticated()) {
+//     next('/login')
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

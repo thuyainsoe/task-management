@@ -47,9 +47,9 @@
                         <el-date-picker class="deadlines-calendar" v-model="scope.row.deadlines" type="date"
                             placeholder="Pick a day" />
                     </div>
-                    <div v-else-if="tableColumn.property === 'tags'" class="table-data-deadlines">
+                    <div v-else-if="tableColumn.property === 'tags'" class="table-data-tags" @click="tagsClick(scope.row)">
                         <span v-for="(tag, index) in scope.row.tags" :key="index">
-                            <el-tag size="small">{{ tag }}</el-tag>
+                            <el-tag size="small">{{ tag.value }}</el-tag>
                         </span>
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"
@@ -64,12 +64,13 @@
             </el-table-column>
         </el-table>
 
+        <!-- Assigned By Dialog -->
         <el-dialog v-model="isAssignedByDialog" title="Assigned By" width="20%" align-center>
             <div class="assigned-by-detail">
                 <img src="../assets/images/profile.jpg" alt="">
-                <span class="assigned-by-detail-name">{{ cloneAssignedBy.name }}</span>
-                <span class="assigned-by-detail-position">{{ cloneAssignedBy.position }}</span>
-                <span class="assigned-by-detail-department">{{ cloneAssignedBy.department }} Department</span>
+                <span class="assigned-by-detail-name">{{ cloneData.name }}</span>
+                <span class="assigned-by-detail-position">{{ cloneData.position }}</span>
+                <span class="assigned-by-detail-department">{{ cloneData.department }} Department</span>
             </div>
             <template #footer>
                 <span class="dialog-footer">
@@ -77,15 +78,51 @@
                 </span>
             </template>
         </el-dialog>
+
+        <!-- Tags Dialog -->
+        <el-dialog v-model="isTagsDialog" title="Tags" width="30%" align-center>
+            <div class="tag-detail">
+                <div class="tag-detail-current-user">
+                    <img src="../assets/images/profile.jpg" alt="">
+                    <div class="user-content">
+                        <!-- <span class="username">{{ cloneData.name }}</span>
+                        <span class="position">{{ cloneData.position }}</span> -->
+                        <span class="username">Aung Aung</span>
+                        <span class="position">Frontend Developer</span>
+                    </div>
+                </div>
+                <el-select value="" @change="changeTags" class="tag-input-dialog" popper-class="tags-dropdown" remote
+                    value-key="id" filterable placement="bottom">
+                    <el-option v-for="tag in tagsOptions" :key="tag.id" :label="tag.value" :value="tag">
+                    </el-option>
+                </el-select>
+                <div class="tags-container">
+                    <span v-for="(tag, index) in cloneData.tags" :key="index" class="single-tag" @click="removeSingleTag">
+                        <el-tag>{{ tag.value }}</el-tag>
+                        <span class="cross-icon">
+                            <img src="../assets/svg-icons/faCross.svg" alt="">
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="isTagsDialog = false">Cancle</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+import tagsOptions from '../data/tagsOptions';
 export default {
     data() {
         return {
             isAssignedByDialog: false,
-            cloneAssignedBy: null,
+            isTagsDialog: false,
+            cloneData: null,
+            tagInput: '',
             tableData: [
                 {
                     content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque, molestias.',
@@ -95,7 +132,20 @@ export default {
                     priority: 'high',
                     department: 'Adminstration',
                     deadlines: '2023-2-20',
-                    tags: ['Meetings', 'Interviews', 'Social Media'],
+                    tags: [
+                        {
+                            id: 39,
+                            value: 'Uniforms'
+                        },
+                        {
+                            id: 40,
+                            value: 'Housekeeping'
+                        },
+                        {
+                            id: 41,
+                            value: 'Medical'
+                        }
+                    ],
                     assigned_by: {
                         name: 'Thu Yain Soe',
                         position: 'Human Resource',
@@ -110,7 +160,20 @@ export default {
                     priority: 'low',
                     department: 'IT',
                     deadlines: '2023-2-10',
-                    tags: ['Meetings', 'Interviews', 'Club'],
+                    tags: [
+                        {
+                            id: 36,
+                            value: 'Health and Safety'
+                        },
+                        {
+                            id: 37,
+                            value: 'Finance'
+                        },
+                        {
+                            id: 38,
+                            value: 'Accounts'
+                        },
+                    ],
                     assigned_by: {
                         name: 'Kyaw Min Tun',
                         position: 'Human Resource',
@@ -210,11 +273,24 @@ export default {
                 return '';
             };
         },
+        tagsOptions() {
+            return tagsOptions;
+        },
     },
     methods: {
         assignedByClick(data) {
-            this.cloneAssignedBy = data
+            this.cloneData = data
             this.isAssignedByDialog = true
+        },
+        tagsClick(data) {
+            this.cloneData = data
+            this.isTagsDialog = true
+        },
+        changeTags(tag) {
+            console.log(tag)
+        },
+        removeSingleTag() {
+
         }
     }
 }
@@ -303,7 +379,7 @@ export default {
                 .select-trigger.el-tooltip__trigger {
                     .el-input.el-input--suffix {
                         box-shadow: none;
-                        
+
                         .el-input__wrapper {
                             box-shadow: none;
                             background-color: transparent;
@@ -400,9 +476,10 @@ export default {
             }
         }
 
-        .table-data-deadlines {
+        .table-data-tags {
             display: flex;
             gap: 5px;
+            cursor: pointer;
         }
     }
 
@@ -431,5 +508,73 @@ export default {
             font-weight: 500;
         }
     }
+
+    .tag-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .tag-detail-current-user {
+            width: 100%;
+            gap: 13px;
+            display: flex;
+            align-items: center;
+
+            img {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+            }
+
+            .user-content {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                .username {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+
+                .position {
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            .single-tag {
+                position: relative;
+                cursor: pointer;
+
+                .cross-icon {
+                    position: absolute;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 2px;
+                    width: 11px;
+                    height: 11px;
+                    border-radius: 50%;
+                    top: -5px;
+                    right: -5px;
+                    background-color: #fff;
+                    border: 1px solid #000;
+
+                    img {
+                        width: 5px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.tags-dropdown[data-popper-placement="right"] {
+    display: none;
 }
 </style>

@@ -33,11 +33,16 @@ export default {
     methods: {
         async loginSubmit() {
             try {
-                const response = await axios.post(`http://localhost/api/login`, {
-                    email: "mgmg@gmail.com",
-                    password: "123456"
-                });
-
+                // const response = await axios.post(`http://localhost/api/login`, {
+                //     email: "mgmg@gmail.com",
+                //     password: "123456"
+                // });
+                const expirationTime = new Date().getTime() + 60 * 60 * 1000;
+                const tokenItem = {
+                    value: response.token,
+                    expiration: expirationTime,
+                };
+                localStorage.setItem('token', JSON.stringify(tokenItem));
                 
             } catch (error) {
                 console.error('Error:', error);

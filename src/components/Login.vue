@@ -1,12 +1,12 @@
 <template>
     <div class="login-wrapper">
         <LogoHeader />
-        <form>
+        <form @submit.prevent="loginSubmit">
             <div class="login-item">
-                <input type="text" placeholder="Email" required>
+                <input type="text" placeholder="Email" v-model="email" required>
             </div>
             <div class="login-item">
-                <input type="password" placeholder="Password" required>
+                <input type="password" placeholder="Password" v-model="password" required>
             </div>
             <div class="login-button">
                 <button>Sign In</button>
@@ -20,9 +20,31 @@
 
 <script>
 import LogoHeader from './LogoHeader.vue';
+import axios from 'axios';
 
 export default {
-    components: { LogoHeader }
+    components: { LogoHeader },
+    data() {
+        return {
+            email: '',
+            password: ''
+        }
+    },
+    methods: {
+        async loginSubmit() {
+            try {
+                const response = await axios.post(`http://localhost/api/login`, {
+                    email: "mgmg@gmail.com",
+                    password: "123456"
+                });
+
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+    }
 }
 </script>
 
@@ -36,7 +58,7 @@ export default {
     position: relative;
     overflow: hidden;
 
-   
+
 
     form {
         width: 400px;

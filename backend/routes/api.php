@@ -36,10 +36,10 @@ Route::post('/register', function(Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasks', [TaskController::class, 'index']);
-    Route::post('/tasks', [TaskController::class, 'store']);
     Route::put('/tasks/{id}', [TaskController::class, 'update']);
 
-    Route::post('/assignments', [AssignmentController::class, 'store']);
+    Route::post('/tasks', [TaskController::class, 'store'])->middleware('only_admin');
+    Route::post('/assignments', [AssignmentController::class, 'store'])->middleware('only_admin');
 
     Route::get('/notifications', [NotificationController::class, 'index']);
 });

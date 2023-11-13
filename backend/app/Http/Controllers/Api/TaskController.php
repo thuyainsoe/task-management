@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\TaskAssigned;
 use App\Http\Controllers\Controller;
+use App\Models\Assignment;
 use App\Models\Comment;
 use App\Models\Notification;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -15,9 +17,38 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Task::get();
+        $tasks = Task::query();
+        if($request->search) {
+            
+            $tasks_id = Task::where('name', 'like', "%$request->search%")->pluck('id')->toArray();
+            
+            $tasks_id_by_user = Assignment::whereIn('assigned_user_id', User::query()
+                                ->where('name', 'like', "%$request->search%")
+                                ->orWhereHas('department', function($department) use($request) {
+                                    $department->where('name', 'like', "%$request->search%");
+                                })
+                                ->pluck('id'))
+                            ->pluck('task_id')
+                            ->toArray();
+
+            $tasks_id = array_merge($tasks_id, $tasks_id_by_user);
+
+            $tasks = $tasks->whereIn('id', $tasks_id);
+        }
+
+        if($request->user_id) {
+            $tasks = $tasks->whereHas('assignment', function($assignment)use($request) {
+                $assignment->where('assigned_user_id', $request->user_id);
+            });
+        }
+
+        if($request->department_id) {
+            
+        }
+
+        return $tasks->get();
     }
 
     /**

@@ -296,9 +296,9 @@ export default {
     },
     mounted() {
         const token = JSON.parse(localStorage.getItem('token')).value;
-        axios.post('http://localhost:8000/api/tasks', {}, {
+        axios.get('http://localhost:8000/api/tasks', {
             headers: {
-                Authorization: `Bearer ${token}`, 
+                'Authorization': `Bearer ${token}`, 
                 'Content-Type': 'application/json', 
             },
         })

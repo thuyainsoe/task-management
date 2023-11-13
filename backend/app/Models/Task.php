@@ -32,4 +32,9 @@ class Task extends Model
 
         $this->update($data);
     }
+
+    public function assignment()
+    {
+        return $this->hasOne(Assignment::class);
+    }
 }

@@ -7,19 +7,22 @@
             </div>
             <div class="main-section-bar">
                 <div class="main-section-buttons">
-                    <div>
+                    <!-- New Task -->
+                    <div class="person-new-task-container">
                         <el-button type="primary" class="new-item" @click="clickNewTaskBtn">
                             <img src="../assets/svg-icons/elAdd.svg" alt="">
                             <span>&nbsp;New Task</span>
                         </el-button>
                     </div>
-
+                    <!-- New Task End -->
+                    <!-- Person Filter -->
                     <div class="person-filter-container">
                         <el-button type="primary" class="new-item" @click="showPersonFilter = !showPersonFilter">
                             <img src="../assets/svg-icons/elUser.svg" alt="">
                             <span>&nbsp;Person </span>
                         </el-button>
                         <div class="person-filter" v-if="showPersonFilter">
+                            <h1 class="person-filter-title">Filter tasks by person</h1>
                             <div class="person-filter-single" v-for="(person, index) in persons" :key="index">
                                 <img src="../assets/images/profile.jpg" alt="">
                                 <div class="person-filter-single-detail">
@@ -30,13 +33,15 @@
                             <span class="arrow"></span>
                         </div>
                     </div>
-
-                    <div>
+                    <!-- Person Filter End -->
+                    <!-- Simple Filter -->
+                    <div class="person-simple-filter-container">
                         <el-button type="primary" class="new-item">
                             <img src="../assets/svg-icons/elFilter.svg" alt="">
                             <span>&nbsp;&nbsp;Filter </span>
                         </el-button>
                     </div>
+                    <!-- Simple Filter End -->
                 </div>
                 <div class="main-section-search">
                     <input type="text" placeholder="Search">
@@ -256,8 +261,16 @@ export default {
                         justify-content: space-between;
                         gap: 10px;
 
+                        .person-filter-title {
+                            padding: 3px 0 3px 7px;
+                            font-size: 14px;
+                            width: 100%;
+                            border-left: 3px solid $blue-color;
+                        }
+
                         .person-filter-single {
                             width: 48.2%;
+                            cursor: pointer;
                             box-shadow: 0px 0px 1px 1px $blue-color;
                             display: flex;
                             align-items: center;

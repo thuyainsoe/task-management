@@ -7,20 +7,36 @@
             </div>
             <div class="main-section-bar">
                 <div class="main-section-buttons">
-                    <el-button type="primary" class="new-item" @click="clickNewTaskBtn">
-                        <img src="../assets/svg-icons/elAdd.svg" alt="">
-                        <span>&nbsp;New Task</span>
-                    </el-button>
+                    <div>
+                        <el-button type="primary" class="new-item" @click="clickNewTaskBtn">
+                            <img src="../assets/svg-icons/elAdd.svg" alt="">
+                            <span>&nbsp;New Task</span>
+                        </el-button>
+                    </div>
 
-                    <el-button type="primary" class="new-item">
-                        <img src="../assets/svg-icons/elUser.svg" alt="">
-                        <span>&nbsp;Person </span>
-                    </el-button>
+                    <div class="person-filter-container">
+                        <el-button type="primary" class="new-item" @click="showPersonFilter = !showPersonFilter">
+                            <img src="../assets/svg-icons/elUser.svg" alt="">
+                            <span>&nbsp;Person </span>
+                        </el-button>
+                        <div class="person-filter" v-if="showPersonFilter">
+                            <div class="person-filter-single" v-for="(person, index) in persons" :key="index">
+                                <img src="../assets/images/profile.jpg" alt="">
+                                <div class="person-filter-single-detail">
+                                    <span class="username">{{ person.name }}</span>
+                                    <span class="position">{{ person.position }}</span>
+                                </div>
+                            </div>
+                            <span class="arrow"></span>
+                        </div>
+                    </div>
 
-                    <el-button type="primary" class="new-item">
-                        <img src="../assets/svg-icons/elFilter.svg" alt="">
-                        <span>&nbsp;&nbsp;Filter </span>
-                    </el-button>
+                    <div>
+                        <el-button type="primary" class="new-item">
+                            <img src="../assets/svg-icons/elFilter.svg" alt="">
+                            <span>&nbsp;&nbsp;Filter </span>
+                        </el-button>
+                    </div>
                 </div>
                 <div class="main-section-search">
                     <input type="text" placeholder="Search">
@@ -36,7 +52,6 @@
     </div>
     <!-- Assigned By Dialog -->
     <el-dialog v-model="isNewTaskDialog" title="New Task" width="30%" align-center>
-        <!-- Hello -->
         <div class="newtask-form-wrapper">
             <form>
                 <div class="newtask-form-item">
@@ -92,6 +107,7 @@ export default {
     data() {
         return {
             isNewTaskDialog: false,
+            showPersonFilter: false,
             options: [
                 {
                     id: 36,
@@ -123,6 +139,20 @@ export default {
                     department: ''
                 }
             },
+            persons: [
+                {
+                    name: "Thu Yain Soe",
+                    position: "Human Resource"
+                },
+                {
+                    name: "Tin Myo Win",
+                    position: "Frontend"
+                },
+                {
+                    name: "Phone Aye Min",
+                    position: "Backend"
+                },
+            ]
         }
     },
     computed: {
@@ -189,16 +219,80 @@ export default {
             .main-section-buttons {
                 display: flex;
                 align-items: center;
+                gap: 10px;
 
-                .el-button.new-item {
-                    display: flex;
-                    gap: 8px;
-                    background-color: $blue-color;
-                    border: none;
 
-                    img {
-                        width: 14px;
-                        height: 14px;
+                div {
+                    .el-button.new-item {
+                        display: flex;
+                        gap: 8px;
+                        background-color: $blue-color;
+                        border: none;
+
+                        img {
+                            width: 14px;
+                            height: 14px;
+                        }
+                    }
+                }
+
+                div.person-filter-container {
+                    position: relative;
+
+                    .person-filter {
+                        padding: 10px;
+                        position: absolute;
+                        top: 45px;
+                        left: -100px;
+                        width: 300px;
+                        height: auto;
+                        background: #fff;
+                        -webkit-box-shadow: 0px 1px 15px 1px #C2C2C2;
+                        border-radius: 5px;
+                        box-shadow: 0px 1px 15px 1px #C2C2C2;
+                        z-index: 500;
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: space-between;
+                        gap: 10px;
+
+                        .person-filter-single {
+                            width: 48.2%;
+                            box-shadow: 0px 0px 1px 1px $blue-color;
+                            display: flex;
+                            align-items: center;
+                            padding: 7px 0px 7px 5px;
+                            gap: 10px;
+                            img {
+                                width: 25px;
+                                height: 25px;
+                                border-radius: 50%;
+                            }
+
+                            .person-filter-single-detail {
+                                display: flex;
+                                flex-direction: column;
+                                .username {
+                                    font-size: 12px;
+                                }
+                                .position {
+                                    font-size: 10px;
+                                    color: #a0a0a0;
+                                }
+                            }
+                        }
+
+                        .arrow {
+                            width: 12px;
+                            height: 12px;
+                            background-color: #fff;
+                            position: absolute;
+                            left: 140px;
+                            top: -6px;
+                            // border-left: 1px solid #000;
+                            // border-top: 1px solid #000;
+                            transform: rotate(45deg);
+                        }
                     }
                 }
             }

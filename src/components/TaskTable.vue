@@ -19,7 +19,7 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'status'" class="table-data-status">
                         <el-select v-model="scope.row.status" :class="getStatusClass(scope.row.status)"
-                            class="m-2 status-selector" placeholder="Select">
+                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)">
                             <el-option v-for="item in statusOptions" :key="item.value" :value="item.value"
                                 :label="item.label" :class="item.class" />
                         </el-select>
@@ -27,13 +27,13 @@
                             <span v-if="scope.row.status === 'in_progress'" class="in-progress">{{ scope.row.status
                             }}</span>
                             <span v-else-if="scope.row.status === 'started'" class="started">{{ scope.row.status }}</span>
-                            <span v-else-if="scope.row.status === 'completed'" class="completed">{{ scope.row.status
+                            <span v-else-if="scope.row.status === 'done'" class="done">{{ scope.row.status
                             }}</span>
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'priority'" class="table-data-priority">
                         <el-select v-model="scope.row.priority" :class="getStatusClass(scope.row.status)"
-                            class="m-2 status-selector" placeholder="Select">
+                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)">
                             <el-option v-for="item in priorityOptions" :key="item.value" :value="item.value"
                                 :label="item.label" :class="item.class" />
                         </el-select>
@@ -118,6 +118,8 @@
 
 <script>
 import tagsOptions from '../data/tagsOptions';
+import { ElNotification } from 'element-plus'
+
 export default {
     data() {
         return {
@@ -238,9 +240,9 @@ export default {
                     class: 'started'
                 },
                 {
-                    label: 'Completed',
-                    value: 'completed',
-                    class: 'completed'
+                    label: 'Done',
+                    value: 'done',
+                    class: 'done'
                 },
             ],
             priorityOptions: [
@@ -267,8 +269,8 @@ export default {
             return (status) => {
                 if (status === 'in_progress') {
                     return 'in-progress';
-                } else if (status === 'completed') {
-                    return 'completed';
+                } else if (status === 'done') {
+                    return 'done';
                 } else if (status === 'started') {
                     return 'started';
                 }
@@ -297,6 +299,26 @@ export default {
         removeSingleTag() {
 
         },
+        updateTask(data) {
+            this.$store.dispatch('tasks/updateTask', { id: data.id, status: data.status, priority: data.priority }).then((res) => {
+                if (res.status) {
+                    ElNotification({
+                        title: 'Success',
+                        message: 'Task is successfully updated.',
+                        type: 'success',
+                        duration: 2000
+                    })
+                    this.$store.dispatch('tasks/fetchTasks')
+                } else {
+                    ElNotification({
+                        title: 'Error',
+                        message: 'Something went wrong.',
+                        type: 'error',
+                        duration: 2000
+                    })
+                }
+            })
+        }
     },
     async mounted() {
         this.$store.dispatch('tasks/fetchTasks')
@@ -376,7 +398,7 @@ export default {
                     background-color: red;
                 }
 
-                .completed {
+                .done {
                     background-color: green;
                 }
             }

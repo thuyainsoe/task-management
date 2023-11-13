@@ -22,17 +22,17 @@
 
 // This is completed stage
 
-.el-select-dropdown__item.completed {
+.el-select-dropdown__item.done {
   background: green;
   color: #fff;
 }
 
-.el-select-dropdown__item.completed.selected {
+.el-select-dropdown__item.done.selected {
   color: #fff;
   font-weight: normal;
 }
 
-.el-select-dropdown__item.completed.selected.hover {
+.el-select-dropdown__item.done.selected.hover {
   background-color: green;
 
   &:hover {
@@ -40,7 +40,7 @@
   }
 }
 
-.el-select-dropdown__item.completed.hover {
+.el-select-dropdown__item.done.hover {
   background-color: green;
 }
 

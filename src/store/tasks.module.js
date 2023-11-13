@@ -11,6 +11,7 @@ const mutations = {
 }
 
 const actions = {
+  // Fetch Task
   async fetchTasks({ commit }) {
     let token = JSON.parse(localStorage.getItem('token')).value
     try {
@@ -24,6 +25,7 @@ const actions = {
       console.error(error)
     }
   },
+  // Add Task
   async addTasks({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
     try {
@@ -32,6 +34,31 @@ const actions = {
           Authorization: `Bearer ${token}`
         }
       })
+      return response
+    } catch (error) {
+      return error
+    }
+  },
+  // Update Task
+  async updateTask({ commit }, taskData) {
+    let token = JSON.parse(localStorage.getItem('token')).value
+    console.log(taskData)
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/tasks/${taskData.id}`,
+        {
+          id: taskData.id,
+          status: taskData.status,
+          priority: taskData.priority,
+          comment: ''
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      console.log(response)
       return response
     } catch (error) {
       return error

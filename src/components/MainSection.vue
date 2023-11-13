@@ -7,7 +7,7 @@
             </div>
             <div class="main-section-bar">
                 <div class="main-section-buttons">
-                    <el-button type="primary" class="new-item">
+                    <el-button type="primary" class="new-item" @click="clickNewTaskBtn">
                         <img src="../assets/svg-icons/elAdd.svg" alt="">
                         <span>&nbsp;New Task</span>
                     </el-button>
@@ -34,13 +34,113 @@
             </div>
         </div>
     </div>
+    <!-- Assigned By Dialog -->
+    <el-dialog v-model="isNewTaskDialog" title="New Task" width="30%" align-center>
+        <!-- Hello -->
+        <div class="newtask-form-wrapper">
+            <form>
+                <div class="newtask-form-item">
+                    <input type="text" placeholder="Task" v-model="newTask.content">
+                </div>
+                <div class="newtask-form-calendar">
+                    <el-date-picker class="calendar" v-model="newTask.deadlines" type="date" placeholder="Deadlines" />
+                </div>
+                <div class="newtask-form-selectors">
+                    <el-select v-model="newTask.name" class="newtask-selector" placeholder="Person">
+                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
+                    </el-select>
+                    <el-select v-model="newTask.status" class="newtask-selector" placeholder="Status">
+                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
+                    </el-select>
+                    <el-select v-model="newTask.priority" class="newtask-selector" placeholder="Prority">
+                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
+                    </el-select>
+                </div>
+                <div class="newtask-form-tags">
+                    <el-select @change="changeTags" class="tag-input-dialog" popper-class="tags-dropdown" remote
+                        value-key="id" filterable placement="bottom" placeholder="Tags">
+                        <el-option v-for="tag in tagsOptions" :key="tag.id" :label="tag.value" :value="tag">
+                        </el-option>
+                    </el-select>
+                    <div class="tags-container">
+                        <span v-for="(tag, index) in newTask.tags" :key="index" class="single-tag"
+                            @click="removeSingleTag(tag)">
+                            <el-tag>{{ tag.value }}</el-tag>
+                            <span class="cross-icon">
+                                <img src="../assets/svg-icons/faCross.svg" alt="">
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="isNewTaskDialog = false">Cancle</el-button>
+                <el-button type="primary" @click="isNewTaskDialog = false">Confirm</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
 import TaskTable from './TaskTable.vue'
+import tagsOptions from '../data/tagsOptions'
+
 export default {
     components: { TaskTable },
+    data() {
+        return {
+            isNewTaskDialog: false,
+            options: [
+                {
+                    id: 36,
+                    value: 'Health and Safety'
+                },
+                {
+                    id: 37,
+                    value: 'Finance'
+                },
+                {
+                    id: 38,
+                    value: 'Accounts'
+                },
+            ],
+            newTask: {
+                content: '',
+                name: '',
+                status: '',
+                position: '',
+                priority: '',
+                department: '',
+                deadlines: '',
+                tags: [
 
+                ],
+                assigned_by: {
+                    name: '',
+                    position: '',
+                    department: ''
+                }
+            },
+        }
+    },
+    computed: {
+        tagsOptions() {
+            return tagsOptions;
+        },
+    },
+    methods: {
+        clickNewTaskBtn() {
+            this.isNewTaskDialog = true
+        },
+        changeTags(tag) {
+            this.newTask.tags.push(tag)
+        },
+        removeSingleTag(tag) {
+            this.newTask.tags = this.newTask.tags.filter((mainTag) => mainTag.id !== tag.id);
+        }
+    }
 }
 </script>
 
@@ -110,9 +210,11 @@ export default {
                 border: 1px solid #000;
                 border-radius: 5px;
                 width: 300px;
+
                 .search-icon {
                     display: flex;
                     align-items: center;
+
                     img {
                         width: 14px;
                     }
@@ -123,6 +225,7 @@ export default {
                     padding: 10px 5px;
                     border: none;
                     outline: none;
+
                     &:focus {
                         outline: none;
                     }
@@ -135,6 +238,84 @@ export default {
             top: 140px;
             height: calc(100% - 140px);
             position: absolute;
+        }
+    }
+}
+
+.newtask-form-wrapper {
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .newtask-form-item {
+            input {
+                width: 100%;
+                height: 35px;
+                padding-left: 10px;
+                border-radius: 5px;
+                outline: none;
+                border: none;
+                box-shadow: 0 0 0 1px #dcdfe6;
+                color: #60626679;
+                font-size: 14px;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+
+        .newtask-form-calendar {
+            .el-input.el-input--prefix.el-date-editor.calendar {
+                width: 100%;
+            }
+        }
+
+        .newtask-form-selectors {
+            display: flex;
+            justify-content: space-between;
+
+            .newtask-selector {
+                width: 32%;
+            }
+        }
+
+        .newtask-form-tags {
+            .tag-input-dialog {
+                width: 100%;
+            }
+
+            .tags-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 15px;
+
+                .single-tag {
+                    position: relative;
+                    cursor: pointer;
+
+                    .cross-icon {
+                        position: absolute;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 2px;
+                        width: 11px;
+                        height: 11px;
+                        border-radius: 50%;
+                        top: -5px;
+                        right: -5px;
+                        background-color: #fff;
+                        border: 1px solid #000;
+
+                        img {
+                            width: 5px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

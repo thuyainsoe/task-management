@@ -1,21 +1,21 @@
 <template>
     <div class="task-table-container">
-        <el-table :data="tableData" style="width: 100%; height: 100%" :border="true" :scrollbar-always-on="true"
+        <el-table :data="tasks" style="width: 100%; height: 100%" :border="true" :scrollbar-always-on="true"
             class="data-table">
             <el-table-column type='selection' width='40'></el-table-column>
             <el-table-column v-for="(tableColumn, index) in tableColumns" :key="index" :fixed="tableColumn.fixed"
                 :label="tableColumn.label" :width="tableColumn.width">
                 <template v-slot="scope">
-                    <div v-if="tableColumn.property === 'task'"><span>{{ scope.row.content }}</span></div>
+                    <div v-if="tableColumn.property === 'task'"><span>{{ scope.row.description }}</span></div>
                     <div v-else-if="tableColumn.property === 'person'" class="table-data-person">
                         <img src="../assets/images/profile.jpg" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.name }}</span>
-                            <span class="person-position">{{ scope.row.position }}</span>
+                            <span class="person-name">{{ scope.row.name ? scope.row.name : '-' }}</span>
+                            <span class="person-position">{{ scope.row.position ? scope.row.position : '-' }}</span>
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'department'" class="table-data-department">
-                        <span>{{ scope.row.department }}</span>
+                        <span>{{ scope.row.department ? scope.row.department : '-' }}</span>
                     </div>
                     <div v-else-if="tableColumn.property === 'status'" class="table-data-status">
                         <el-select v-model="scope.row.status" :class="getStatusClass(scope.row.status)"
@@ -24,7 +24,7 @@
                                 :label="item.label" :class="item.class" />
                         </el-select>
                         <div class="label-show">
-                            <span v-if="scope.row.status === 'in progress'" class="in-progress">{{ scope.row.status
+                            <span v-if="scope.row.status === 'in_progress'" class="in-progress">{{ scope.row.status
                             }}</span>
                             <span v-else-if="scope.row.status === 'started'" class="started">{{ scope.row.status }}</span>
                             <span v-else-if="scope.row.status === 'completed'" class="completed">{{ scope.row.status
@@ -56,8 +56,9 @@
                         @click="assignedByClick(scope.row.assigned_by)">
                         <img src="../assets/images/profile.jpg" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.assigned_by.name }}</span>
-                            <span class="person-position">{{ scope.row.assigned_by.position }}</span>
+                            <span class="person-name">{{ scope.row.assigned_by ? scope.row.assigned_by.name : '-' }}</span>
+                            <span class="person-position">{{ scope.row.assigned_by ? scope.row.assigned_by.position : '-'
+                            }}</span>
                         </div>
                     </div>
                 </template>
@@ -71,6 +72,7 @@
                 <span class="assigned-by-detail-name">{{ cloneData.name }}</span>
                 <span class="assigned-by-detail-position">{{ cloneData.position }}</span>
                 <span class="assigned-by-detail-department">{{ cloneData.department }} Department</span>
+                <pre>{{ tasks }}</pre>
             </div>
             <template #footer>
                 <span class="dialog-footer">
@@ -116,7 +118,6 @@
 
 <script>
 import tagsOptions from '../data/tagsOptions';
-import axios from 'axios';
 export default {
     data() {
         return {
@@ -228,7 +229,7 @@ export default {
             statusOptions: [
                 {
                     label: 'In Progress',
-                    value: 'in progress',
+                    value: 'in_progress',
                     class: 'in_progress'
                 },
                 {
@@ -277,6 +278,9 @@ export default {
         tagsOptions() {
             return tagsOptions;
         },
+        tasks() {
+            return this.$store.getters['tasks/tasks']
+        }
     },
     methods: {
         assignedByClick(data) {
@@ -294,21 +298,9 @@ export default {
 
         },
     },
-    mounted() {
-        const token = JSON.parse(localStorage.getItem('token')).value;
-        axios.get('http://localhost:8000/api/tasks', {
-            headers: {
-                'Authorization': `Bearer ${token}`, 
-                'Content-Type': 'application/json', 
-            },
-        })
-        .then(response => {
-            console.log(response.data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
+    async mounted() {
+        this.$store.dispatch('tasks/fetchTasks')
+    },
 }
 </script>
 

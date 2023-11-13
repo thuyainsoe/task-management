@@ -60,7 +60,7 @@
         <div class="newtask-form-wrapper">
             <form>
                 <div class="newtask-form-item">
-                    <input type="text" placeholder="Task" v-model="newTask.content">
+                    <input type="text" placeholder="Task" v-model="newTask.description">
                 </div>
                 <div class="newtask-form-calendar">
                     <el-date-picker class="calendar" v-model="newTask.deadlines" type="date" placeholder="Deadlines" />
@@ -73,7 +73,8 @@
                         <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
                     </el-select>
                     <el-select v-model="newTask.priority" class="newtask-selector" placeholder="Prority">
-                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
+                        <el-option v-for="item in prorityOptions" :key="item.value" :label="item.label"
+                            :value="item.value" />
                     </el-select>
                 </div>
                 <div class="newtask-form-tags">
@@ -97,7 +98,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="isNewTaskDialog = false">Cancle</el-button>
-                <el-button type="primary" @click="isNewTaskDialog = false">Confirm</el-button>
+                <el-button type="primary" @click="addTaskHandler">Confirm</el-button>
             </span>
         </template>
     </el-dialog>
@@ -106,6 +107,7 @@
 <script>
 import TaskTable from './TaskTable.vue'
 import tagsOptions from '../data/tagsOptions'
+import { ElNotification } from 'element-plus'
 
 export default {
     components: { TaskTable },
@@ -128,7 +130,7 @@ export default {
                 },
             ],
             newTask: {
-                content: '',
+                description: '',
                 name: '',
                 status: '',
                 position: '',
@@ -157,6 +159,20 @@ export default {
                     name: "Phone Aye Min",
                     position: "Backend"
                 },
+            ],
+            prorityOptions: [
+                {
+                    value: 'high',
+                    label: 'High'
+                },
+                {
+                    value: 'low',
+                    label: 'Low'
+                },
+                {
+                    value: 'medium',
+                    label: 'Medium'
+                },
             ]
         }
     },
@@ -174,6 +190,33 @@ export default {
         },
         removeSingleTag(tag) {
             this.newTask.tags = this.newTask.tags.filter((mainTag) => mainTag.id !== tag.id);
+        },
+        async addTaskHandler() {
+            this.isNewTaskDialog = false
+            let taskData = {
+                name: 'Thu Yain Soe',
+                description: this.newTask.description,
+                priority: this.newTask.priority
+            }
+            this.$store.dispatch('tasks/addTasks', taskData).then((res) => {
+                if (res.status) {
+                    ElNotification({
+                        title: 'Success',
+                        message: 'A new task is successfully created.',
+                        type: 'success',
+                        duration: 2000
+                    })
+                    this.$store.dispatch('tasks/fetchTasks')
+                } else {
+                    ElNotification({
+                        title: 'Error',
+                        message: 'Something went wrong.',
+                        type: 'error',
+                        duration: 2000
+                    })
+                }
+            })
+            this.newTask = { ...this.$options.data().newTask };
         }
     }
 }
@@ -276,6 +319,7 @@ export default {
                             align-items: center;
                             padding: 7px 0px 7px 5px;
                             gap: 10px;
+
                             img {
                                 width: 25px;
                                 height: 25px;
@@ -285,9 +329,11 @@ export default {
                             .person-filter-single-detail {
                                 display: flex;
                                 flex-direction: column;
+
                                 .username {
                                     font-size: 12px;
                                 }
+
                                 .position {
                                     font-size: 10px;
                                     color: #a0a0a0;
@@ -364,7 +410,7 @@ export default {
                 outline: none;
                 border: none;
                 box-shadow: 0 0 0 1px #dcdfe6;
-                color: #60626679;
+                color: #000000;
                 font-size: 14px;
 
                 &:focus {

@@ -1,16 +1,10 @@
 import { createStore } from 'vuex'
+import AuthModule from './auth.module'
+import TasksModule from './tasks.module'
 
 export default createStore({
-  state: {
-    
-  },
-  mutations: {
-    // Your mutations go here
-  },
-  actions: {
-    // Your actions go here
-  },
-  getters: {
-    // Your getters go here
+  modules: {
+    auth: AuthModule,
+    tasks: TasksModule
   }
 })

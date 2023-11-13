@@ -45,7 +45,6 @@ export default {
                     expiration: expirationTime,
                 };
                 localStorage.setItem('token', JSON.stringify(tokenItem));
-
                 this.$router.push('/').catch(err => { console.log(err) });
 
             } catch (error) {

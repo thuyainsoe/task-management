@@ -52,7 +52,7 @@
                         <img src="../assets/svg-icons/faUser.svg" alt="">
                         <span>My Profile</span>
                     </div>
-                    <div class="navbar-user-item">
+                    <div class="navbar-user-item" @click="logoutHandler">
                         <img src="../assets/svg-icons/faLogout.svg" alt="">
                         <span>Logout</span>
                     </div>
@@ -68,6 +68,12 @@ export default {
         return {
             showUserDetail: false,
             showNotiDialog: false
+        }
+    },
+    methods: {
+        logoutHandler() {
+            localStorage.removeItem('token');
+            this.$router.push('/login').catch(err => { console.log(err) });
         }
     }
 }
@@ -251,6 +257,7 @@ export default {
                     display: flex;
                     align-items: center;
                     gap: 10px;
+                    cursor: pointer;
 
                     img {
                         width: 15px;

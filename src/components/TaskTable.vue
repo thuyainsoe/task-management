@@ -116,6 +116,7 @@
 
 <script>
 import tagsOptions from '../data/tagsOptions';
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -291,7 +292,22 @@ export default {
         },
         removeSingleTag() {
 
-        }
+        },
+    },
+    mounted() {
+        const token = JSON.parse(localStorage.getItem('token')).value;
+        axios.post('http://localhost:8000/api/tasks', {}, {
+            headers: {
+                Authorization: `Bearer ${token}`, 
+                'Content-Type': 'application/json', 
+            },
+        })
+        .then(response => {
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
     }
 }
 </script>

@@ -3,11 +3,12 @@
         <LogoHeader />
         <form @submit.prevent="loginSubmit">
             <div class="login-item">
-                <input type="text" placeholder="Email" v-model="email" required>
+                <input type="text" placeholder="Email" v-model="email" required @focus="errMessage = null">
             </div>
             <div class="login-item">
-                <input type="password" placeholder="Password" v-model="password" required>
+                <input type="password" placeholder="Password" v-model="password" required @focus="errMessage = null">
             </div>
+            <span v-if="errMessage" class="err-message">{{ errMessage }}</span>
             <div class="login-button">
                 <button>Sign In</button>
             </div>
@@ -27,25 +28,28 @@ export default {
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            errMessage: null
         }
     },
     methods: {
         async loginSubmit() {
             try {
-                const response = await axios.post(`http://localhost/api/login`, {
-                    email: "mgmg@gmail.com",
-                    password: "123456"
+                const response = await axios.post(`http://localhost:8000/api/login`, {
+                    email: this.email,
+                    password: this.password
                 });
-                console.log(response)
                 const expirationTime = new Date().getTime() + 60 * 60 * 1000;
                 const tokenItem = {
-                    value: response.token,
+                    value: response.data.token,
                     expiration: expirationTime,
                 };
                 localStorage.setItem('token', JSON.stringify(tokenItem));
-                
+
+                this.$router.push('/').catch(err => { console.log(err) });
+
             } catch (error) {
+                this.errMessage = error.response.data.message
                 console.error('Error:', error);
             }
         }
@@ -98,6 +102,13 @@ export default {
                 font-size: 14px;
                 border: none;
             }
+        }
+
+        .err-message {
+            color: red;
+            align-self: flex-start;
+            font-size: 12px;
+            padding: none;
         }
 
         .register-or-not {

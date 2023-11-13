@@ -40,6 +40,8 @@ const isAuthenticated = () => {
 router.beforeEach((to, from, next) => {
   if (to.matched.some((route) => route.meta.requiresAuth) && !isAuthenticated()) {
     next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated()) {
+    next('/')
   } else {
     next()
   }

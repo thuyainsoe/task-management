@@ -45,7 +45,10 @@ class TaskController extends Controller
         }
 
         if($request->department_id) {
-            
+            $user_ids = User::where('department_id', $request->department_id)->pluck('id');
+            $tasks = $tasks->whereHas('assignment', function($assignment) use($user_ids) {
+                $assignment->whereIn('assigned_user_id', $user_ids);
+            });
         }
 
         return $tasks->get();

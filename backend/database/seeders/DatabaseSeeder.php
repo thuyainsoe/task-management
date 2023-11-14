@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Department;
 use App\Models\Task;
 use Illuminate\Database\Seeder;
 
@@ -28,5 +29,37 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Task::factory(10)->create();
+
+        Department::factory()->create([
+            'name' => 'Adminstration'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Admissions'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Communications'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'IT'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Student Affairs'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Facilities'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Trannsportation'
+        ]);
+
+        Department::factory()->create([
+            'name' => 'Food Service'
+        ]);
     }
 }

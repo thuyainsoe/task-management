@@ -109,6 +109,10 @@ import TaskTable from './TaskTable.vue'
 import tagsOptions from '../data/tagsOptions'
 import { ElNotification } from 'element-plus'
 
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+
 export default {
     components: { TaskTable },
     data() {
@@ -218,6 +222,23 @@ export default {
             })
             this.newTask = { ...this.$options.data().newTask };
         }
+    },
+    mounted() {
+        window.Pusher = Pusher;
+
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: '670e5acb7049ec790187',
+            cluster: 'mt1',
+            forceTLS: true
+        });
+
+        let userId = 12
+
+        window.Echo.channel('task-assigned-' + userId)
+            .listen('TaskAssigned', (data) => {
+                console.log(data);
+        });
     }
 }
 </script>

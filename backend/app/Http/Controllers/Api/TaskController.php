@@ -51,7 +51,7 @@ class TaskController extends Controller
             });
         }
 
-        return $tasks->get();
+        return $tasks->with('assignment.assignedUser', 'assignment.assignedBy')->get();
     }
 
     /**

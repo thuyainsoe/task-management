@@ -62,7 +62,8 @@
                             }}</span>
                         </div>
                     </div>
-                    <div v-else-if="tableColumn.property === 'remark'" class="table-data-remark" @click="remarkClick(scope.row)">
+                    <div v-else-if="tableColumn.property === 'remark'" class="table-data-remark"
+                        @click="remarkClick(scope.row)">
                         testing
                     </div>
                 </template>
@@ -73,10 +74,10 @@
         <el-dialog v-model="isAssignedByDialog" title="Assigned By" width="20%" align-center>
             <div class="assigned-by-detail">
                 <img src="../assets/images/profile.jpg" alt="">
-                <span class="assigned-by-detail-name">{{ cloneData.name }}</span>
-                <span class="assigned-by-detail-position">{{ cloneData.position }}</span>
-                <span class="assigned-by-detail-department">{{ cloneData.department }} Department</span>
-                <pre>{{ tasks }}</pre>
+                <span class="assigned-by-detail-name">{{ cloneData ? cloneData.name : '' }}</span>
+                <span class="assigned-by-detail-position">{{ cloneData ? cloneData.position : '' }}</span>
+                <span class="assigned-by-detail-department">{{ cloneData ? cloneData.department : '' }}
+                    Department</span>
             </div>
             <template #footer>
                 <span class="dialog-footer">
@@ -119,7 +120,7 @@
         </el-dialog>
 
         <!-- Remark Drawer -->
-        <el-drawer v-model="remarkDrawer" title="I am the title" direction="rtl" :before-close="handleClose">
+        <el-drawer v-model="remarkDrawer" title="I am the title" direction="rtl">
             <span>Hi, there!</span>
         </el-drawer>
     </div>

@@ -44,7 +44,7 @@
                     <!-- Simple Filter End -->
                 </div>
                 <div class="main-section-search">
-                    <input type="text" placeholder="Search">
+                    <input type="text" placeholder="Search" v-model="searchText">
                     <span class="search-icon">
                         <img src="../assets/svg-icons/faSearch.svg" alt="">
                     </span>
@@ -66,8 +66,8 @@
                     <el-date-picker class="calendar" v-model="newTask.deadlines" type="date" placeholder="Deadlines" />
                 </div>
                 <div class="newtask-form-selectors">
-                    <el-select v-model="newTask.name" class="newtask-selector" placeholder="Person">
-                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.value" :value="item.value" />
+                    <el-select v-model="newTask.assigned_user_id" class="newtask-selector" placeholder="Person">
+                        <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
                     </el-select>
                     <!-- <el-select v-model="newTask.status" class="newtask-selector" placeholder="Status">
                         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
@@ -119,6 +119,8 @@ export default {
         return {
             isNewTaskDialog: false,
             showPersonFilter: false,
+            searchText: '',
+            debounceTimer: null,
             statusOptions: [
                 {
                     value: 'in_progress',
@@ -135,7 +137,7 @@ export default {
             ],
             newTask: {
                 description: '',
-                name: '',
+                assigned_user_id: '',
                 status: '',
                 position: '',
                 priority: '',
@@ -186,11 +188,15 @@ export default {
         },
         authUser() {
             return this.$store.getters['auth/user']
+        },
+        users() {
+            return this.$store.getters['users/users']
         }
     },
     methods: {
         clickNewTaskBtn() {
             this.isNewTaskDialog = true
+            this.$store.dispatch('users/fetchUsers')
         },
         changeTags(tag) {
             this.newTask.tags.push(tag)
@@ -205,7 +211,8 @@ export default {
                 name: "Thu Yain Soe",
                 description: this.newTask.description,
                 priority: this.newTask.priority,
-                due_date: this.changeDateFormat(this.newTask.deadlines)
+                due_date: this.changeDateFormat(this.newTask.deadlines),
+                assigned_user_id: this.newTask.assigned_user_id
             }
             this.$store.dispatch('tasks/addTasks', taskData).then((res) => {
                 if (res.status) {
@@ -256,6 +263,22 @@ export default {
         //     .listen('TaskAssigned', (data) => {
         //         console.log(data,"this is from MainSection");
         //     });
+    },
+    watch: {
+        searchText: {
+            handler(newText) {
+                // Clear the previous timer if it exists
+                if (this.debounceTimer) {
+                    clearTimeout(this.debounceTimer)
+                }
+
+                // Set a new timer to execute the API call after 500ms (adjust as needed)
+                this.debounceTimer = setTimeout(() => {
+                    this.$store.dispatch('tasks/fetchTasks', newText)
+                }, 500) // Change this delay to your desired milliseconds (e.g., 1000 for 1 second)
+            },
+            immediate: false
+        }
     }
 }
 </script>

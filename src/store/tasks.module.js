@@ -12,8 +12,9 @@ const mutations = {
 
 const actions = {
   // Fetch Task
-  async fetchTasks({ commit }) {
+  async fetchTasks({ commit }, searchText) {
     let token = JSON.parse(localStorage.getItem('token')).value
+    console.log(searchText)
     try {
       const response = await axios.get('http://localhost:8000/api/tasks', {
         headers: {

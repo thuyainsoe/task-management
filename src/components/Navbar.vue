@@ -105,7 +105,7 @@ export default {
         window.Echo.channel('task-assigned-' + user.id)
             .listen('TaskAssigned', (data) => {
                 // console.log(data,"this is from navbar");
-                // this.notiCount += 1 
+                this.notiCount += 1 
             });
     }
 }

@@ -35,8 +35,19 @@ class FileController extends Controller
         $file = $request->file('file');
 
         $filename =  Carbon::now()->format('YmdHis') . $file->getClientOriginalName();
-        Storage::put("tasks", $file);
-        dd($file->path());
+        Storage::putFileAs("tasks", $file, $filename);
+
+        $filepath = Storage::path($filename);
+
+        $data = [
+            'task_id' => $request->task_id,
+            'file_name' => $filename,
+            'file_path' => $filepath,
+            'upload_date' => Carbon::now()->format('Y-m-d H:i'),
+        ];
+
+        return File::create($data);
+
     }
 
     /**
@@ -69,5 +80,13 @@ class FileController extends Controller
     public function destroy(File $file)
     {
         //
+    }
+
+    public function download(Request $request, File $file) {
+        $file = File::query()->findOrFail($request->id);
+
+        $filename = $file->file_name;
+
+        return Storage::download("tasks/$filename");
     }
 }

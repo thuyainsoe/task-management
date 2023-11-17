@@ -50,3 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/files', [FileController::class, 'store']);
 });
+
+Route::get('/files/{id}/download', [FileController::class, 'download']);

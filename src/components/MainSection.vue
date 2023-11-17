@@ -200,6 +200,7 @@ export default {
         },
         changeTags(tag) {
             this.newTask.tags.push(tag)
+            console.log(this.newTask.tags)
         },
         removeSingleTag(tag) {
             this.newTask.tags = this.newTask.tags.filter((mainTag) => mainTag.id !== tag.id);
@@ -207,13 +208,16 @@ export default {
         async addTaskHandler() {
             this.isNewTaskDialog = false
             let user = JSON.parse(localStorage.getItem('token')).authUser;
+            let tagsArray = this.newTask.tags.map(tag => tag.id)
             let taskData = {
-                // name: "Thu Yain Soe",
+                name: "Thu Yain Soe",
                 description: this.newTask.description,
                 priority: this.newTask.priority,
                 due_date: this.changeDateFormat(this.newTask.deadlines),
-                assigned_user_id: this.newTask.assigned_user_id
+                assigned_user_id: this.newTask.assigned_user_id,
+                tags: tagsArray
             }
+
             this.$store.dispatch('tasks/addTasks', taskData).then((res) => {
                 if (res.status) {
                     ElNotification({

@@ -8,10 +8,10 @@
                 <template v-slot="scope">
                     <div v-if="tableColumn.property === 'task'"><span>{{ scope.row.description }}</span></div>
                     <div v-else-if="tableColumn.property === 'person'" class="table-data-person">
-                        <img src="../assets/images/profile.jpg" alt="">
+                        <img :src="scope.row.assignment.assigned_user.username" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.name ? scope.row.name : '-' }}</span>
-                            <span class="person-position">{{ scope.row.position ? scope.row.position : '-' }}</span>
+                            <span class="person-name">{{ scope.row.assignment ? scope.row.assignment.assigned_user.name : '-' }}</span>
+                            <span class="person-position">{{ scope.row.assignment.assigned_user.position ? scope.row.assignment.assigned_user.position : '-' }}</span>
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'department'" class="table-data-department">
@@ -55,10 +55,10 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"
                         @click="assignedByClick(scope.row.assigned_by)">
-                        <img src="../assets/images/profile.jpg" alt="">
+                        <img :src="scope.row.assignment.assigned_by.username" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.assigned_by ? scope.row.assigned_by.name : '-' }}</span>
-                            <span class="person-position">{{ scope.row.assigned_by ? scope.row.assigned_by.position : '-'
+                            <span class="person-name">{{ scope.row.assignment.assigned_by.name ? scope.row.assignment.assigned_by.name : '-' }}</span>
+                            <span class="person-position">{{ scope.row.assignment.assigned_by.position ? scope.row.assignment.assigned_by.position : '-'
                             }}</span>
                         </div>
                     </div>

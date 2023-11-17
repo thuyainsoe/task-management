@@ -89,7 +89,7 @@ export default {
         }
     },
     mounted() {
-        this.$store.dispatch("notification/fetchNotifications")
+        // this.$store.dispatch("notification/fetchNotifications")
 
         window.Pusher = Pusher;
 

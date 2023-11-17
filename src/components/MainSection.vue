@@ -208,7 +208,7 @@ export default {
             this.isNewTaskDialog = false
             let user = JSON.parse(localStorage.getItem('token')).authUser;
             let taskData = {
-                name: "Thu Yain Soe",
+                // name: "Thu Yain Soe",
                 description: this.newTask.description,
                 priority: this.newTask.priority,
                 due_date: this.changeDateFormat(this.newTask.deadlines),

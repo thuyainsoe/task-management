@@ -37,6 +37,7 @@ Route::post('/register', function(Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::put('/tasks/{id}', [TaskController::class, 'update']);
 

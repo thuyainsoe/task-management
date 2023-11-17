@@ -43,8 +43,10 @@ export default {
                 const tokenItem = {
                     value: response.data.token,
                     expiration: expirationTime,
+                    authUser: response.data.user
                 };
                 localStorage.setItem('token', JSON.stringify(tokenItem));
+                this.$store.dispatch('auth/setUser', response.data.user)
                 this.$router.push('/').catch(err => { console.log(err) });
 
             } catch (error) {

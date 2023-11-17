@@ -67,11 +67,12 @@
                 </div>
                 <div class="newtask-form-selectors">
                     <el-select v-model="newTask.name" class="newtask-selector" placeholder="Person">
-                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
+                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.value" :value="item.value" />
                     </el-select>
-                    <el-select v-model="newTask.status" class="newtask-selector" placeholder="Status">
-                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value" />
-                    </el-select>
+                    <!-- <el-select v-model="newTask.status" class="newtask-selector" placeholder="Status">
+                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
+                            :value="item.value" />
+                    </el-select> -->
                     <el-select v-model="newTask.priority" class="newtask-selector" placeholder="Prority">
                         <el-option v-for="item in prorityOptions" :key="item.value" :label="item.label"
                             :value="item.value" />
@@ -108,7 +109,6 @@
 import TaskTable from './TaskTable.vue'
 import tagsOptions from '../data/tagsOptions'
 import { ElNotification } from 'element-plus'
-
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
@@ -119,18 +119,18 @@ export default {
         return {
             isNewTaskDialog: false,
             showPersonFilter: false,
-            options: [
+            statusOptions: [
                 {
-                    id: 36,
-                    value: 'Health and Safety'
+                    value: 'in_progress',
+                    label: 'In Progress'
                 },
                 {
-                    id: 37,
-                    value: 'Finance'
+                    value: 'done',
+                    label: 'Done'
                 },
                 {
-                    id: 38,
-                    value: 'Accounts'
+                    value: 'cancelled',
+                    label: 'Camcelled'
                 },
             ],
             newTask: {
@@ -184,6 +184,9 @@ export default {
         tagsOptions() {
             return tagsOptions;
         },
+        authUser() {
+            return this.$store.getters['auth/user']
+        }
     },
     methods: {
         clickNewTaskBtn() {
@@ -197,10 +200,12 @@ export default {
         },
         async addTaskHandler() {
             this.isNewTaskDialog = false
+            let user = JSON.parse(localStorage.getItem('token')).authUser;
             let taskData = {
-                name: 'Thu Yain Soe',
+                name: "Thu Yain Soe",
                 description: this.newTask.description,
-                priority: this.newTask.priority
+                priority: this.newTask.priority,
+                due_date: this.changeDateFormat(this.newTask.deadlines)
             }
             this.$store.dispatch('tasks/addTasks', taskData).then((res) => {
                 if (res.status) {
@@ -221,6 +226,19 @@ export default {
                 }
             })
             this.newTask = { ...this.$options.data().newTask };
+        },
+        changeDateFormat(date) {
+            let originalDate = new Date(date);
+
+            let year = originalDate.getFullYear();
+            let month = originalDate.getMonth() + 1;
+            let day = originalDate.getDate();
+
+            const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+            const formattedDay = day < 10 ? `0${day}` : `${day}`;
+            const formattedDateString = `${year}-${formattedMonth}-${formattedDay}`;
+
+            return formattedDateString
         }
     },
     mounted() {
@@ -233,12 +251,11 @@ export default {
             forceTLS: true
         });
 
-        let userId = 12
-
-        window.Echo.channel('task-assigned-' + userId)
+        let user = JSON.parse(localStorage.getItem('token')).authUser;
+        window.Echo.channel(`task-assigned-${user.id}`)
             .listen('TaskAssigned', (data) => {
-                console.log(data);
-        });
+                console.log(data,"this is from MainSection");
+            });
     }
 }
 </script>
@@ -451,7 +468,7 @@ export default {
             justify-content: space-between;
 
             .newtask-selector {
-                width: 32%;
+                width: 49.6%;
             }
         }
 

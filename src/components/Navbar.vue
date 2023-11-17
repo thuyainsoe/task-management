@@ -12,7 +12,7 @@
         <div class="navbar-right">
             <div class="navbar-noti">
                 <img src="../assets/svg-icons/faBell.svg" alt="" @click="showNotiDialog = !showNotiDialog">
-                <span class="noti-count">5</span>
+                <span class="noti-count" v-if="notiCount !== 0">5</span>
 
                 <!-- For Noti Dialog -->
                 <div class="navbar-noti-dialog" v-if="showNotiDialog">
@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="navbar-user">
-                <img src="../assets/images/profile.jpg" alt="" @click="showUserDetail = !showUserDetail">
+                <img :src="userAvator" alt="" @click="showUserDetail = !showUserDetail">
                 <div class="navbar-user-detail" v-if="showUserDetail">
                     <div class="navbar-user-logo">
                         YIS<span>.</span>
@@ -63,11 +63,23 @@
 </template>
 
 <script>
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 export default {
     data() {
         return {
             showUserDetail: false,
-            showNotiDialog: false
+            showNotiDialog: false,
+            notiCount: 0
+        }
+    },
+    computed: {
+        userAvator() {
+            const authUser = JSON.parse(localStorage.getItem('token')).authUser;
+            if (authUser) {
+                return authUser.username; // Return the username
+            }
+            return '';
         }
     },
     methods: {
@@ -75,6 +87,23 @@ export default {
             localStorage.removeItem('token');
             this.$router.push('/login').catch(err => { console.log(err) });
         }
+    },
+    mounted() {
+        window.Pusher = Pusher;
+
+        window.Echo = new Echo({
+            broadcaster: 'pusher',
+            key: '670e5acb7049ec790187',
+            cluster: 'mt1',
+            forceTLS: true
+        });
+
+
+        let user = JSON.parse(localStorage.getItem('token')).authUser;
+        window.Echo.channel('task-assigned-' + user.id)
+            .listen('TaskAssigned', (data) => {
+                console.log(data,"this is from navbar");
+            });
     }
 }
 </script>

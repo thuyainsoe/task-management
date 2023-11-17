@@ -12,7 +12,8 @@
                 <input type="password" placeholder="Password" required v-model="password" @focus="errMessage = null">
             </div>
             <div class="register-item">
-                <input type="password" placeholder="Reenter-Password" required v-model="re_password" @focus="errMessage = null">
+                <input type="password" placeholder="Reenter-Password" required v-model="re_password"
+                    @focus="errMessage = null">
             </div>
             <span v-if="errMessage" class="err-message">{{ errMessage }}</span>
             <div class="register-button">
@@ -43,6 +44,11 @@ export default {
     },
     methods: {
         async registerSubmit() {
+            let upperCaseName = this.username.toUpperCase();
+            let avator = upperCaseName.replace(/\b(mg)\b/g, match =>
+                match.replace(/(^|\s)([a-z])/g, subMatch => subMatch.toUpperCase())
+            ).replace(/\s/g, "+");
+
             if (this.password !== this.re_password) {
                 this.errMessage = 'Something went wrong!'
             } else {
@@ -51,9 +57,10 @@ export default {
                         name: this.username,
                         email: this.email,
                         password: this.password,
-                        username: this.username,
+                        username: `https://ui-avatars.com/api/?name=${avator}`,
                         role: 'admin',
-                        department_id: 1
+                        department_id: 1,
+
                     });
                     ElNotification({
                         title: 'Success',

@@ -29,7 +29,7 @@ class UserFactory extends Factory
 
             'username' => fake()->userName(),
             'role' => fake()->title(),
-            'department_id' => fake()->randomNumber(),
+            'department_id' => rand(1, 8),
             'position' => fake()->name(),
         ];
     }

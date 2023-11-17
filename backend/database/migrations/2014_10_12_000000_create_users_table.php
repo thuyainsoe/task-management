@@ -21,9 +21,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->string('username');
-            $table->string('role');
+            $table->string('role')->default('normal');
             $table->integer('department_id');
-            $table->string('position');
+            $table->string('position')->nullable();
         });
     }
 

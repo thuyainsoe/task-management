@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Assignment;
 use App\Models\Department;
 use App\Models\Tag;
 use App\Models\Task;
@@ -62,6 +63,16 @@ class DatabaseSeeder extends Seeder
         Department::factory()->create([
             'name' => 'Food Service'
         ]);
+
+        Task::query()
+            ->get()
+            ->map(function($task) {
+                Assignment::create([
+                    'task_id' => $task->id,
+                    'assigned_user_id' => rand(1, 10),
+                    'assigned_by' => rand(1, 10),
+                ]);
+            });
 
         $this->call([
             TagsSeeder::class

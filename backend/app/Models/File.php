@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class File extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'task_id',
+        'file_name',
+        'file_path',
+        'upload_date',
+    ];
 }

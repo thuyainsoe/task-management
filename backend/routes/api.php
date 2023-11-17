@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\Finder\Iterator\FilecontentFilterIterator;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,4 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/assignments', [AssignmentController::class, 'store'])->middleware('only_admin');
 
     Route::get('/notifications', [NotificationController::class, 'index']);
+
+    Route::post('/files', [FileController::class, 'store']);
 });

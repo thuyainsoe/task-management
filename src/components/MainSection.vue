@@ -109,8 +109,8 @@
 import TaskTable from './TaskTable.vue'
 import tagsOptions from '../data/tagsOptions'
 import { ElNotification } from 'element-plus'
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+// import Echo from 'laravel-echo';
+// import Pusher from 'pusher-js';
 
 
 export default {
@@ -242,20 +242,20 @@ export default {
         }
     },
     mounted() {
-        window.Pusher = Pusher;
+        // window.Pusher = Pusher;
 
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: '670e5acb7049ec790187',
-            cluster: 'mt1',
-            forceTLS: true
-        });
+        // window.Echo = new Echo({
+        //     broadcaster: 'pusher',
+        //     key: '670e5acb7049ec790187',
+        //     cluster: 'mt1',
+        //     forceTLS: true
+        // });
 
-        let user = JSON.parse(localStorage.getItem('token')).authUser;
-        window.Echo.channel(`task-assigned-${user.id}`)
-            .listen('TaskAssigned', (data) => {
-                console.log(data,"this is from MainSection");
-            });
+        // let user = JSON.parse(localStorage.getItem('token')).authUser;
+        // window.Echo.channel(`task-assigned-${user.id}`)
+        //     .listen('TaskAssigned', (data) => {
+        //         console.log(data,"this is from MainSection");
+        //     });
     }
 }
 </script>

@@ -62,6 +62,9 @@
                             }}</span>
                         </div>
                     </div>
+                    <div v-else-if="tableColumn.property === 'remark'" class="table-data-remark" @click="remarkClick(scope.row)">
+                        testing
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -114,6 +117,11 @@
                 </span>
             </template>
         </el-dialog>
+
+        <!-- Remark Drawer -->
+        <el-drawer v-model="remarkDrawer" title="I am the title" direction="rtl" :before-close="handleClose">
+            <span>Hi, there!</span>
+        </el-drawer>
     </div>
 </template>
 
@@ -128,6 +136,7 @@ export default {
             isTagsDialog: false,
             cloneData: null,
             tagInput: '',
+            remarkDrawer: false,
             tableData: [
                 {
                     content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque, molestias.',
@@ -228,6 +237,11 @@ export default {
                     property: 'assigned_by',
                     width: 200,
                 },
+                {
+                    label: 'Remark',
+                    property: 'remark',
+                    width: 400
+                }
             ],
             statusOptions: [
                 {
@@ -343,6 +357,9 @@ export default {
             const formattedDateString = `${year}-${formattedMonth}-${formattedDay}`;
 
             return formattedDateString
+        },
+        remarkClick(data) {
+            this.remarkDrawer = !this.remarkDrawer
         }
     },
     async mounted() {
@@ -534,6 +551,10 @@ export default {
         .table-data-tags {
             display: flex;
             gap: 5px;
+            cursor: pointer;
+        }
+
+        .table-data-remark {
             cursor: pointer;
         }
     }

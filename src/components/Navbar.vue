@@ -12,7 +12,7 @@
         <div class="navbar-right">
             <div class="navbar-noti">
                 <img src="../assets/svg-icons/faBell.svg" alt="" @click="showNotiDialog = !showNotiDialog">
-                <span class="noti-count" v-if="notiCount !== 0">5</span>
+                <span class="noti-count" v-if="notiCount !== 0">{{ notiCount }}</span>
 
                 <!-- For Noti Dialog -->
                 <div class="navbar-noti-dialog" v-if="showNotiDialog">
@@ -89,6 +89,8 @@ export default {
         }
     },
     mounted() {
+        this.$store.dispatch("notification/fetchNotifications")
+
         window.Pusher = Pusher;
 
         window.Echo = new Echo({
@@ -102,7 +104,8 @@ export default {
         let user = JSON.parse(localStorage.getItem('token')).authUser;
         window.Echo.channel('task-assigned-' + user.id)
             .listen('TaskAssigned', (data) => {
-                console.log(data,"this is from navbar");
+                // console.log(data,"this is from navbar");
+                // this.notiCount += 1 
             });
     }
 }

@@ -60,7 +60,7 @@ export default {
                         username: `https://ui-avatars.com/api/?name=${avator}`,
                         role: 'admin',
                         department_id: 1,
-
+                        position: ''
                     });
                     ElNotification({
                         title: 'Success',

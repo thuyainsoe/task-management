@@ -12,9 +12,8 @@ const mutations = {
 
 const actions = {
   // Fetch Task
-  async fetchTasks({ commit }, searchText) {
+  async fetchTasks({ commit }) {
     let token = JSON.parse(localStorage.getItem('token')).value
-    console.log(searchText)
     try {
       const response = await axios.get('http://localhost:8000/api/tasks', {
         headers: {
@@ -29,6 +28,7 @@ const actions = {
   // Add Task
   async addTasks({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
+    console.log(taskData)
     try {
       const response = await axios.post('http://localhost:8000/api/tasks', taskData, {
         headers: {
@@ -42,7 +42,6 @@ const actions = {
   },
   // Update Task
   async updateTask({ commit }, taskData) {
-    console.log(taskData)
     let token = JSON.parse(localStorage.getItem('token')).value
     try {
       const response = await axios.put(

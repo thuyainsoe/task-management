@@ -51,7 +51,7 @@ class TaskController extends Controller
             });
         }
 
-        return $tasks->with('assignment.assignedUser', 'assignment.assignedBy')->get();
+        return $tasks->with('tags', 'assignment.assignedUser.department', 'assignment.assignedBy.department')->orderByDesc('updated_at')->get();
     }
 
     /**
@@ -68,7 +68,20 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $data = $request->toArray();
-        return Task::create($data);
+        $task = Task::create($data);
+
+        if($request->assigned_user_id) {
+            $request['task_id'] = $task->id;
+            $assignControl = new AssignmentController();
+
+            $assignControl->store($request);
+        }
+
+        if($request->tags) {
+            $task->tags()->sync($request->tags);
+        }
+
+        return $task;
     }
 
     /**

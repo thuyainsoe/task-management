@@ -37,4 +37,9 @@ class Task extends Model
     {
         return $this->hasOne(Assignment::class);
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class,'tags_tasks','tag_id', 'task_id');
+    }
 }

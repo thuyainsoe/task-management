@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Department;
+use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Database\Seeder;
 
@@ -17,16 +18,16 @@ class DatabaseSeeder extends Seeder
     {
         \App\Models\User::factory(10)->create();
 
-        \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
 
-        \App\Models\User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-        ]);
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Admin User',
+        //     'email' => 'admin@example.com',
+        //     'role' => 'admin',
+        // ]);
 
         Task::factory(10)->create();
 
@@ -60,6 +61,10 @@ class DatabaseSeeder extends Seeder
 
         Department::factory()->create([
             'name' => 'Food Service'
+        ]);
+
+        $this->call([
+            TagsSeeder::class
         ]);
     }
 }

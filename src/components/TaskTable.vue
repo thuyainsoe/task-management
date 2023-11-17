@@ -50,7 +50,7 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'tags'" class="table-data-tags" @click="tagsClick(scope.row)">
                         <span v-for="(tag, index) in scope.row.tags" :key="index">
-                            <el-tag size="small">{{ tag.value }}</el-tag>
+                            <el-tag size="small">{{ tag.name }}</el-tag>
                         </span>
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"

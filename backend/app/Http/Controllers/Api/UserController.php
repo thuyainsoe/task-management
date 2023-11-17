@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::query()->get();
+        return User::query()->with('department')->get();
     }
 
     /**

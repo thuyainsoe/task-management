@@ -52,9 +52,12 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Notification $notification)
+    public function update(Request $request, User $user)
     {
-        //
+        $user = User::findOrFail($request->id);
+        $user->update($request->toArray());
+
+        return $user->fresh();
     }
 
     /**

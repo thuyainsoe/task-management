@@ -41,8 +41,8 @@ const actions = {
   },
   // Update Task
   async updateTask({ commit }, taskData) {
-    let token = JSON.parse(localStorage.getItem('token')).value
     console.log(taskData)
+    let token = JSON.parse(localStorage.getItem('token')).value
     try {
       const response = await axios.put(
         `http://localhost:8000/api/tasks/${taskData.id}`,
@@ -50,6 +50,7 @@ const actions = {
           id: taskData.id,
           status: taskData.status,
           priority: taskData.priority,
+          due_date: taskData.due_date,
           comment: ''
         },
         {
@@ -58,7 +59,6 @@ const actions = {
           }
         }
       )
-      console.log(response)
       return response
     } catch (error) {
       return error

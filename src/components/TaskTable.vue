@@ -26,7 +26,8 @@
                         <div class="label-show">
                             <span v-if="scope.row.status === 'in_progress'" class="in-progress">{{ scope.row.status
                             }}</span>
-                            <span v-else-if="scope.row.status === 'started'" class="started">{{ scope.row.status }}</span>
+                            <span v-else-if="scope.row.status === 'cancelled'" class="cancelled">{{ scope.row.status
+                            }}</span>
                             <span v-else-if="scope.row.status === 'done'" class="done">{{ scope.row.status
                             }}</span>
                         </div>
@@ -44,8 +45,8 @@
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'deadlines'" class="table-data-deadlines">
-                        <el-date-picker class="deadlines-calendar" v-model="scope.row.deadlines" type="date"
-                            placeholder="Pick a day" />
+                        <el-date-picker class="deadlines-calendar" v-model="scope.row.due_date" type="date"
+                            placeholder="Pick a day" @change="updateTask(scope.row)" />
                     </div>
                     <div v-else-if="tableColumn.property === 'tags'" class="table-data-tags" @click="tagsClick(scope.row)">
                         <span v-for="(tag, index) in scope.row.tags" :key="index">
@@ -235,9 +236,9 @@ export default {
                     class: 'in_progress'
                 },
                 {
-                    label: 'Started',
-                    value: 'started',
-                    class: 'started'
+                    label: 'Cancelled',
+                    value: 'cancelled',
+                    class: 'cancelled'
                 },
                 {
                     label: 'Done',
@@ -271,8 +272,8 @@ export default {
                     return 'in-progress';
                 } else if (status === 'done') {
                     return 'done';
-                } else if (status === 'started') {
-                    return 'started';
+                } else if (status === 'cancelled') {
+                    return 'cancelled';
                 }
                 return '';
             };
@@ -285,6 +286,9 @@ export default {
         }
     },
     methods: {
+        testing(data) {
+            // console.log(data)
+        },
         assignedByClick(data) {
             this.cloneData = data
             this.isAssignedByDialog = true
@@ -294,13 +298,21 @@ export default {
             this.isTagsDialog = true
         },
         changeTags(tag) {
-            console.log(tag)
+            // console.log(tag)
         },
         removeSingleTag() {
 
         },
         updateTask(data) {
-            this.$store.dispatch('tasks/updateTask', { id: data.id, status: data.status, priority: data.priority }).then((res) => {
+
+            let dueDate = this.changeDateFormat(data.due_date)
+            let variable = {
+                id: data.id,
+                status: data.status,
+                priority: data.priority,
+                due_date: dueDate
+            }
+            this.$store.dispatch('tasks/updateTask', variable).then((res) => {
                 if (res.status) {
                     ElNotification({
                         title: 'Success',
@@ -318,6 +330,19 @@ export default {
                     })
                 }
             })
+        },
+        changeDateFormat(date) {
+            let originalDate = new Date(date);
+
+            let year = originalDate.getFullYear();
+            let month = originalDate.getMonth() + 1;
+            let day = originalDate.getDate();
+
+            const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+            const formattedDay = day < 10 ? `0${day}` : `${day}`;
+            const formattedDateString = `${year}-${formattedMonth}-${formattedDay}`;
+
+            return formattedDateString
         }
     },
     async mounted() {
@@ -394,7 +419,7 @@ export default {
                     background-color: #faa919;
                 }
 
-                .started {
+                .cancelled {
                     background-color: red;
                 }
 

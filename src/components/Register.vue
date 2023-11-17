@@ -1,24 +1,25 @@
 <template>
     <div class="register-wrapper">
         <LogoHeader />
-        <form>
+        <form @submit.prevent="registerSubmit">
             <div class="register-item">
-                <input type="text" placeholder="Username" required>
-            </div>
-            <div class="register-item">
-                <input type="text" placeholder="Email" required>
+                <input type="text" placeholder="Username" required v-model="username" @focus="errMessage = null">
             </div>
             <div class="register-item">
-                <input type="password" placeholder="Password" required>
+                <input type="text" placeholder="Email" required v-model="email" @focus="errMessage = null">
             </div>
-             <div class="register-item">
-                <input type="password" placeholder="Reenter-Password" required>
+            <div class="register-item">
+                <input type="password" placeholder="Password" required v-model="password" @focus="errMessage = null">
             </div>
+            <div class="register-item">
+                <input type="password" placeholder="Reenter-Password" required v-model="re_password" @focus="errMessage = null">
+            </div>
+            <span v-if="errMessage" class="err-message">{{ errMessage }}</span>
             <div class="register-button">
                 <button>Sign Up</button>
             </div>
             <p class="register-or-not">
-               Already have an account ? <span> Sign In</span>
+                Already have an account ? <span><router-link to="/login">Sign In</router-link></span>
             </p>
         </form>
     </div>
@@ -26,9 +27,49 @@
 
 <script>
 import LogoHeader from './LogoHeader.vue';
+import axios from 'axios';
+import { ElNotification } from 'element-plus'
 
 export default {
-    components: { LogoHeader }
+    components: { LogoHeader },
+    data() {
+        return {
+            username: '',
+            email: '',
+            password: '',
+            re_password: '',
+            errMessage: null
+        }
+    },
+    methods: {
+        async registerSubmit() {
+            if (this.password !== this.re_password) {
+                this.errMessage = 'Something went wrong!'
+            } else {
+                try {
+                    const response = await axios.post(`http://localhost:8000/api/register`, {
+                        name: this.username,
+                        email: this.email,
+                        password: this.password,
+                        username: this.username,
+                        role: 'admin',
+                        department_id: 1
+                    });
+                    ElNotification({
+                        title: 'Success',
+                        message: 'Registration Completed.',
+                        type: 'success',
+                        duration: 2000
+                    })
+                    this.$router.push('/login').catch(err => { console.log(err) });
+
+                } catch (error) {
+                    this.errMessage = error.response.data.message
+                    console.error('Error:', error);
+                }
+            }
+        }
+    }
 }
 </script>
 
@@ -63,6 +104,13 @@ export default {
                 border: none;
                 border-bottom: 1px solid #000;
             }
+        }
+
+        .err-message {
+            color: red;
+            align-self: flex-start;
+            font-size: 12px;
+            padding: none;
         }
 
         .register-button {

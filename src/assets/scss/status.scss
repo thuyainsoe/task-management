@@ -46,17 +46,17 @@
 
 // This is stared stage
 
-.el-select-dropdown__item.started {
+.el-select-dropdown__item.cancelled {
   background: red;
   color: #fff;
 }
 
-.el-select-dropdown__item.started.selected {
+.el-select-dropdown__item.cancelled.selected {
     color: #fff;
     font-weight: normal;
   }
   
-  .el-select-dropdown__item.started.selected.hover {
+  .el-select-dropdown__item.cancelled.selected.hover {
     background-color: red;
   
     &:hover {
@@ -64,6 +64,6 @@
     }
   }
   
-  .el-select-dropdown__item.started.hover {
+  .el-select-dropdown__item.cancelled.hover {
     background-color: red;
   }

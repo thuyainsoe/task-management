@@ -13,7 +13,7 @@
                 <button>Sign In</button>
             </div>
             <p class="register-or-not">
-                Don't have an account yet ? <span> Sign Up</span>
+                Don't have an account yet ? <span><router-link to="/register">Sign Up</router-link></span>
             </p>
         </form>
     </div>

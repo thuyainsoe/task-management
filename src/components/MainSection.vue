@@ -13,8 +13,8 @@
                             <span>&nbsp;New Task</span>
                         </el-button>
                     </div>
-                    <div class="person-simple-filter-container">
-                        <el-button type="primary" class="new-item" @click="showFilter = !showFilter">
+                    <div class="person-simple-filter-container" ref="filterButton">
+                        <el-button type="primary" class="new-item" @click="clickFilterButton">
                             <img src="../assets/svg-icons/elFilter.svg" alt="">
                             <span>&nbsp;&nbsp;Filter </span>
                         </el-button>
@@ -281,10 +281,18 @@ export default {
         reloadAllTask() {
             this.showFilter = false
             this.$store.dispatch('tasks/fetchTasks')
+        },
+        clickFilterButton() {
+            this.showFilter = !this.showFilter
         }
     },
     mounted() {
         this.$store.dispatch('users/fetchUsers')
+        document.body.addEventListener('click', (event) => {
+            if (this.$refs.filterButton && !this.$refs.filterButton.contains(event.target)) {
+                this.showFilter = false
+            }
+        })
     },
     watch: {
         searchText: {

@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="navbar-right">
-            <div class="navbar-noti">
+            <div class="navbar-noti" ref="navbarNoti">
                 <img src="../assets/svg-icons/faBell.svg" alt="" @click="clickNoti">
                 <span class="noti-count" v-if="notiCount !== 0">{{ notiCount }}</span>
 
@@ -29,7 +29,7 @@
                     There are no updates or notifications.
                 </div>
             </div>
-            <div class="navbar-user">
+            <div class="navbar-user" ref="navbarUser">
                 <img :src="userAvator" alt="" @click="showUserDetail = !showUserDetail">
                 <div class="navbar-user-detail" v-if="showUserDetail">
                     <div class="navbar-user-logo">
@@ -195,6 +195,15 @@ export default {
             .listen('TaskAssigned', (data) => {
                 this.$store.commit('notifications/setNotiCount', data.noti_count);
             });
+
+        document.body.addEventListener('click', (event) => {
+            if (this.$refs.navbarNoti && !this.$refs.navbarNoti.contains(event.target)) {
+                this.showNotiDialog = false
+            }
+            if (this.$refs.navbarUser && !this.$refs.navbarUser.contains(event.target)) {
+                this.showUserDetail = false
+            }
+        })
     }
 }
 </script>

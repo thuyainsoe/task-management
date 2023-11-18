@@ -32,7 +32,6 @@ const actions = {
           department_id: departmentIndex ? departmentIndex : ''
         }
       })
-      console.log(response)
       commit('setTasks', response.data)
     } catch (error) {
       console.error(error)

@@ -49,6 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
 
     Route::post('/files', [FileController::class, 'store']);
+
+    Route::get('/tasks/{task_id}/files', [FileController::class, 'index']);
+    Route::get('/tasks/{task_id}/comments', [TaskController::class, 'getComment']);
 });
 
 Route::get('/files/{id}/download', [FileController::class, 'download']);

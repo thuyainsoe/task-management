@@ -155,4 +155,8 @@ class TaskController extends Controller
     {
         //
     }
+
+    public function getComment(Request $request) {
+        return Comment::query()->where('task_id', $request->task_id)->orderByDesc('created_at')->get();
+    }
 }

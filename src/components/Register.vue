@@ -58,7 +58,7 @@ export default {
                         email: this.email,
                         password: this.password,
                         username: `https://ui-avatars.com/api/?name=${avator}`,
-                        role: 'admin',
+                        role: 'guest',
                         department_id: 1,
                         position: ''
                     });

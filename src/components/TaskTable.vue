@@ -17,11 +17,13 @@
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'department'" class="table-data-department">
-                        <span>{{ scope.row.assignment.assigned_user.department ?  scope.row.assignment.assigned_user.department.name : '-'}}</span>
+                        <span>{{ scope.row.assignment.assigned_user.department ?
+                            scope.row.assignment.assigned_user.department.name : '-' }}</span>
                     </div>
                     <div v-else-if="tableColumn.property === 'status'" class="table-data-status">
                         <el-select v-model="scope.row.status" :class="getStatusClass(scope.row.status)"
-                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)">
+                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)"
+                            :disabled="!isSelfTask(scope.row) && !isAdmin">
                             <el-option v-for="item in statusOptions" :key="item.value" :value="item.value"
                                 :label="item.label" :class="item.class" />
                         </el-select>
@@ -36,7 +38,8 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'priority'" class="table-data-priority">
                         <el-select v-model="scope.row.priority" :class="getStatusClass(scope.row.status)"
-                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)">
+                            class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)"
+                            :disabled="!isSelfTask(scope.row) || isAdmin">
                             <el-option v-for="item in priorityOptions" :key="item.value" :value="item.value"
                                 :label="item.label" :class="item.class" />
                         </el-select>
@@ -48,7 +51,7 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'deadlines'" class="table-data-deadlines">
                         <el-date-picker class="deadlines-calendar" v-model="scope.row.due_date" type="date"
-                            placeholder="Pick a day" @change="updateTask(scope.row)" />
+                            placeholder="Pick a day" @change="updateTask(scope.row)" :disabled="!isAdmin" />
                     </div>
                     <div v-else-if="tableColumn.property === 'tags'" class="table-data-tags" @click="tagsClick(scope.row)">
                         <span v-for="(tag, index) in scope.row.tags" :key="index">
@@ -68,7 +71,6 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'remark'" class="table-data-remark"
                         @click="remarkClick(scope.row)">
-                        testing
                     </div>
                 </template>
             </el-table-column>
@@ -106,7 +108,7 @@
         </el-dialog>
 
         <!-- Tags Dialog -->
-        <el-dialog v-model="isTagsDialog" title="Tags" width="30%" align-center>
+        <el-dialog v-model="isTagsDialog" title="Tags" width="30%" align-center v-if="isAdmin">
             <div class="tag-detail">
                 <div class="tag-detail-current-user">
                     <img :src="cloneData.assignment.assigned_user.username" alt="">
@@ -319,6 +321,9 @@ export default {
         },
         tasks() {
             return this.$store.getters['tasks/tasks']
+        },
+        isAdmin() {
+            return JSON.parse(localStorage.getItem('token')).authUser.role === 'admin';
         }
     },
     methods: {
@@ -380,6 +385,10 @@ export default {
         },
         remarkClick(data) {
             this.remarkDrawer = !this.remarkDrawer
+        },
+        isSelfTask(data) {
+            let currentUserId = JSON.parse(localStorage.getItem('token')).authUser.id;
+            return data.assignment.assigned_user.id === currentUserId
         }
     },
     async mounted() {

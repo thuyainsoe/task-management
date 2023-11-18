@@ -3,6 +3,11 @@
     <div class="side-bar-wrapper">
       <h3 class="side-bar-header">Departments</h3>
       <ul class="side-bar-lists">
+        <li class="side-bar-list" :class="{ active: menuItemIndex === 0 }" @click="changeMenuTitle('All')">
+          <img v-if="menuItemIndex === 0" src="../assets/svg-icons/faFolderOpen.svg" alt="">
+          <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
+          <span class="side-bar-dept-name">All</span>
+        </li>
         <li class="side-bar-list" :class="{ active: menuItemIndex === 1 }" @click="changeMenuTitle('Adminstration')">
           <img v-if="menuItemIndex === 1" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
@@ -52,35 +57,61 @@
 export default {
   data() {
     return {
-      menuItemIndex: 1
+      menuItemIndex: 0
+    }
+  },
+  computed: {
+    departmentIndex() {
+      return this.$store.getters['tasks/departmentIndex']
     }
   },
   methods: {
     changeMenuTitle(dept) {
       switch (dept) {
+        case 'All':
+          this.menuItemIndex = 0;
+          this.$store.commit('tasks/setDepartmentIndex', null)
+          this.$store.dispatch('tasks/fetchTasks')
+          break;
         case 'Adminstration':
           this.menuItemIndex = 1;
+          this.$store.commit('tasks/setDepartmentIndex', 1)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Admissions':
           this.menuItemIndex = 2;
+          this.$store.commit('tasks/setDepartmentIndex', 2)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Communications':
           this.menuItemIndex = 3;
+          this.$store.commit('tasks/setDepartmentIndex', 3)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'IT':
           this.menuItemIndex = 4;
+          this.$store.commit('tasks/setDepartmentIndex', 4)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Student Affairs':
           this.menuItemIndex = 5;
+          this.$store.commit('tasks/setDepartmentIndex', 5)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Facilities':
           this.menuItemIndex = 6;
+          this.$store.commit('tasks/setDepartmentIndex', 6)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Trannsportation':
           this.menuItemIndex = 7;
+          this.$store.commit('tasks/setDepartmentIndex', 7)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Food Service':
           this.menuItemIndex = 8;
+          this.$store.commit('tasks/setDepartmentIndex', 8)
+          this.$store.dispatch('tasks/fetchTasks')
           break;
       }
     }
@@ -90,6 +121,7 @@ export default {
 
 <style lang="scss">
 @import '../assets/main.scss';
+
 .side-bar {
   flex: 1;
   height: calc(100vh - 50px);
@@ -109,6 +141,7 @@ export default {
       font-size: 20px;
       position: relative;
       width: max-content;
+
       &::before {
         content: "";
         position: absolute;

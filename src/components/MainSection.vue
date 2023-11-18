@@ -7,34 +7,12 @@
             </div>
             <div class="main-section-bar">
                 <div class="main-section-buttons">
-                    <!-- New Task -->
-                    <div class="person-new-task-container">
+                    <div class="person-new-task-container" v-if="isAdmin">
                         <el-button type="primary" class="new-item" @click="clickNewTaskBtn">
                             <img src="../assets/svg-icons/elAdd.svg" alt="">
                             <span>&nbsp;New Task</span>
                         </el-button>
                     </div>
-                    <!-- New Task End -->
-                    <!-- Person Filter -->
-                    <!-- <div class="person-filter-container">
-                        <el-button type="primary" class="new-item" @click="showPersonFilter = !showPersonFilter">
-                            <img src="../assets/svg-icons/elUser.svg" alt="">
-                            <span>&nbsp;Person </span>
-                        </el-button>
-                        <div class="person-filter" v-if="showPersonFilter">
-                            <h1 class="person-filter-title">Filter tasks by person</h1>
-                            <div class="person-filter-single" v-for="(person, index) in persons" :key="index">
-                                <img src="../assets/images/profile.jpg" alt="">
-                                <div class="person-filter-single-detail">
-                                    <span class="username">{{ person.name }}</span>
-                                    <span class="position">{{ person.position }}</span>
-                                </div>
-                            </div>
-                            <span class="arrow"></span>
-                        </div>
-                    </div> -->
-                    <!-- Person Filter End -->
-                    <!-- Simple Filter -->
                     <div class="person-simple-filter-container">
                         <el-button type="primary" class="new-item" @click="showFilter = !showFilter">
                             <img src="../assets/svg-icons/elFilter.svg" alt="">
@@ -45,7 +23,8 @@
                             <div class="filter-person">
                                 <h1>Person</h1>
                                 <div class="filter-item-wrapper">
-                                    <div v-for="user in users" :key="user.id" class="filter-person-item">
+                                    <div v-for="user in users" :key="user.id" class="filter-person-item"
+                                        @click="filterPerson(user, 'person')">
                                         <img :src="user.username" alt="" class="filter-person-image">
                                         <div class="filter-person-detail">
                                             <span class="name">{{ user.name }}</span>
@@ -58,7 +37,7 @@
                                 <h1>Status</h1>
                                 <div class="filter-item-wrapper">
                                     <div v-for="status in statusOptions" :key="status.value" class="filter-status-item"
-                                        :class="status.value">
+                                        :class="status.value" @click="filterPerson(status, 'status')">
                                         <span class="single-status">{{ status.label }}</span>
                                     </div>
                                 </div>
@@ -67,14 +46,19 @@
                                 <h1>Priority</h1>
                                 <div class="filter-item-wrapper">
                                     <div v-for="priority in priorityOptions" :key="priority.value"
-                                        class="filter-priority-item" :class="priority.value">
+                                        class="filter-priority-item" :class="priority.value"
+                                        @click="filterPerson(priority, 'priority')">
                                         <span class="single-priority">{{ priority.label }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Simple Filter End -->
+                    <div class="person-reset">
+                        <el-button type="primary" class="new-item" @click="reloadAllTask">
+                            <img src="../assets/svg-icons/faReset.svg" alt="">
+                        </el-button>
+                    </div>
                 </div>
                 <div class="main-section-search">
                     <input type="text" placeholder="Search" v-model="searchText">
@@ -88,7 +72,7 @@
             </div>
         </div>
     </div>
-    <!-- Assigned By Dialog -->
+
     <el-dialog v-model="isNewTaskDialog" title="New Task" width="30%" align-center>
         <div class="newtask-form-wrapper">
             <form>
@@ -218,6 +202,9 @@ export default {
         },
         users() {
             return this.$store.getters['users/users']
+        },
+        isAdmin() {
+            return JSON.parse(localStorage.getItem('token')).authUser.role === 'admin';
         }
     },
     methods: {
@@ -276,6 +263,24 @@ export default {
             const formattedDateString = `${year}-${formattedMonth}-${formattedDay}`;
 
             return formattedDateString
+        },
+        filterPerson(data, type) {
+            this.showFilter = false
+            switch (type) {
+                case 'person':
+                    this.$store.dispatch('tasks/fetchTasks', { user_id: data.id })
+                    break;
+                case 'status':
+                    this.$store.dispatch('tasks/fetchTasks', { status: data.value })
+                    break;
+                case 'priority':
+                    this.$store.dispatch('tasks/fetchTasks', { priority: data.value })
+                    break;
+            }
+        },
+        reloadAllTask() {
+            this.showFilter = false
+            this.$store.dispatch('tasks/fetchTasks')
         }
     },
     mounted() {
@@ -291,7 +296,7 @@ export default {
 
                 // Set a new timer to execute the API call after 500ms (adjust as needed)
                 this.debounceTimer = setTimeout(() => {
-                    this.$store.dispatch('tasks/fetchTasks', newText)
+                    this.$store.dispatch('tasks/fetchTasks', { searchText: newText })
                 }, 500) // Change this delay to your desired milliseconds (e.g., 1000 for 1 second)
             },
             immediate: false

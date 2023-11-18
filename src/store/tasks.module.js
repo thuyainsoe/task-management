@@ -1,28 +1,38 @@
 import axios from 'axios'
 
 const state = {
-  tasks: []
+  tasks: [],
+  departmentIndex: null
 }
 
 const mutations = {
   setTasks(state, tasks) {
     state.tasks = tasks
+  },
+  setDepartmentIndex(state, index) {
+    state.departmentIndex = index
   }
 }
 
 const actions = {
   // Fetch Task
-  async fetchTasks({ commit }, searchText) {
+  async fetchTasks({ commit }, payload) {
     let token = JSON.parse(localStorage.getItem('token')).value
+    let departmentIndex = state.departmentIndex
     try {
       const response = await axios.get('http://localhost:8000/api/tasks', {
         headers: {
           Authorization: `Bearer ${token}`
         },
         params: {
-          search: searchText ? searchText : '',
+          search: payload ? payload.searchText : '',
+          user_id: payload ? payload.user_id : '',
+          status: payload ? payload.status : '',
+          priority: payload ? payload.priority : '',
+          department_id: departmentIndex ? departmentIndex : ''
         }
       })
+      console.log(response)
       commit('setTasks', response.data)
     } catch (error) {
       console.error(error)
@@ -45,7 +55,6 @@ const actions = {
   // Update Task
   async updateTask({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
-    console.log(taskData)
     try {
       const response = await axios.put(
         `http://localhost:8000/api/tasks/${taskData.id}`,
@@ -71,7 +80,8 @@ const actions = {
 }
 
 const getters = {
-  tasks: (state) => state.tasks
+  tasks: (state) => state.tasks,
+  departmentIndex: (state) => state.departmentIndex
 }
 
 export default {

@@ -16,7 +16,7 @@
                     </div>
                     <!-- New Task End -->
                     <!-- Person Filter -->
-                    <div class="person-filter-container">
+                    <!-- <div class="person-filter-container">
                         <el-button type="primary" class="new-item" @click="showPersonFilter = !showPersonFilter">
                             <img src="../assets/svg-icons/elUser.svg" alt="">
                             <span>&nbsp;Person </span>
@@ -32,14 +32,47 @@
                             </div>
                             <span class="arrow"></span>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- Person Filter End -->
                     <!-- Simple Filter -->
                     <div class="person-simple-filter-container">
-                        <el-button type="primary" class="new-item">
+                        <el-button type="primary" class="new-item" @click="showFilter = !showFilter">
                             <img src="../assets/svg-icons/elFilter.svg" alt="">
                             <span>&nbsp;&nbsp;Filter </span>
                         </el-button>
+                        <!-- hello -->
+                        <div class="all-filter" v-if="showFilter">
+                            <div class="filter-person">
+                                <h1>Person</h1>
+                                <div class="filter-item-wrapper">
+                                    <div v-for="user in users" :key="user.id" class="filter-person-item">
+                                        <img :src="user.username" alt="" class="filter-person-image">
+                                        <div class="filter-person-detail">
+                                            <span class="name">{{ user.name }}</span>
+                                            <span class="position">{{ user.position ? user.position : '-' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-status">
+                                <h1>Status</h1>
+                                <div class="filter-item-wrapper">
+                                    <div v-for="status in statusOptions" :key="status.value" class="filter-status-item"
+                                        :class="status.value">
+                                        <span class="single-status">{{ status.label }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-priority">
+                                <h1>Priority</h1>
+                                <div class="filter-item-wrapper">
+                                    <div v-for="priority in priorityOptions" :key="priority.value"
+                                        class="filter-priority-item" :class="priority.value">
+                                        <span class="single-priority">{{ priority.label }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!-- Simple Filter End -->
                 </div>
@@ -69,12 +102,8 @@
                     <el-select v-model="newTask.assigned_user_id" class="newtask-selector" placeholder="Person">
                         <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
                     </el-select>
-                    <!-- <el-select v-model="newTask.status" class="newtask-selector" placeholder="Status">
-                        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select> -->
                     <el-select v-model="newTask.priority" class="newtask-selector" placeholder="Prority">
-                        <el-option v-for="item in prorityOptions" :key="item.value" :label="item.label"
+                        <el-option v-for="item in priorityOptions" :key="item.value" :label="item.label"
                             :value="item.value" />
                     </el-select>
                 </div>
@@ -109,9 +138,6 @@
 import TaskTable from './TaskTable.vue'
 import tagsOptions from '../data/tagsOptions'
 import { ElNotification } from 'element-plus'
-// import Echo from 'laravel-echo';
-// import Pusher from 'pusher-js';
-
 
 export default {
     components: { TaskTable },
@@ -119,6 +145,7 @@ export default {
         return {
             isNewTaskDialog: false,
             showPersonFilter: false,
+            showFilter: false,
             searchText: '',
             debounceTimer: null,
             statusOptions: [
@@ -132,7 +159,7 @@ export default {
                 },
                 {
                     value: 'cancelled',
-                    label: 'Camcelled'
+                    label: 'Cancelled'
                 },
             ],
             newTask: {
@@ -166,11 +193,7 @@ export default {
                     position: "Backend"
                 },
             ],
-            prorityOptions: [
-                {
-                    value: 'high',
-                    label: 'High'
-                },
+            priorityOptions: [
                 {
                     value: 'low',
                     label: 'Low'
@@ -179,6 +202,10 @@ export default {
                     value: 'medium',
                     label: 'Medium'
                 },
+                {
+                    value: 'high',
+                    label: 'High'
+                }
             ]
         }
     },
@@ -200,7 +227,6 @@ export default {
         },
         changeTags(tag) {
             this.newTask.tags.push(tag)
-            console.log(this.newTask.tags)
         },
         removeSingleTag(tag) {
             this.newTask.tags = this.newTask.tags.filter((mainTag) => mainTag.id !== tag.id);
@@ -253,20 +279,7 @@ export default {
         }
     },
     mounted() {
-        // window.Pusher = Pusher;
-
-        // window.Echo = new Echo({
-        //     broadcaster: 'pusher',
-        //     key: '670e5acb7049ec790187',
-        //     cluster: 'mt1',
-        //     forceTLS: true
-        // });
-
-        // let user = JSON.parse(localStorage.getItem('token')).authUser;
-        // window.Echo.channel(`task-assigned-${user.id}`)
-        //     .listen('TaskAssigned', (data) => {
-        //         console.log(data,"this is from MainSection");
-        //     });
+        this.$store.dispatch('users/fetchUsers')
     },
     watch: {
         searchText: {
@@ -416,6 +429,130 @@ export default {
                             // border-left: 1px solid #000;
                             // border-top: 1px solid #000;
                             transform: rotate(45deg);
+                        }
+                    }
+                }
+
+                div.person-simple-filter-container {
+                    position: relative;
+
+                    .all-filter {
+                        position: absolute;
+                        z-index: 100;
+                        top: 35px;
+                        left: 0px;
+                        width: 500px;
+                        height: 200px;
+                        border-radius: 5px;
+                        background: #fff;
+                        box-shadow: 0px 1px 15px 1px #C2C2C2;
+                        border-radius: 5px;
+                        display: flex;
+                        gap: 5px;
+
+
+                        div {
+                            width: 33%;
+                            height: 100%;
+                            padding: 10px 2px;
+
+                            h1 {
+                                font-size: 14px;
+                                font-weight: 400;
+                                color: #333;
+                                margin-left: 10px;
+                            }
+
+                            .filter-item-wrapper {
+                                width: 100%;
+                                height: 96%;
+                                overflow-y: scroll;
+                                overflow-x: hidden;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 2px;
+
+                                .filter-person-item {
+                                    width: 100%;
+                                    height: px;
+                                    display: flex;
+                                    padding: 0px 7px;
+                                    align-items: center;
+                                    gap: 5px;
+                                    cursor: pointer;
+                                    border-left: 2px solid $red-color;
+
+                                    .filter-person-image {
+                                        width: 30px;
+                                        height: 30px;
+                                        border-radius: 50%;
+                                        border: 1px solid $yellow-color;
+                                    }
+
+                                    .filter-person-detail {
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: center;
+
+                                        span.name {
+                                            font-size: 12px;
+                                            white-space: nowrap;
+                                        }
+
+                                        span.position {
+                                            font-size: 11px;
+                                            white-space: nowrap;
+                                            color: #494949;
+                                        }
+                                    }
+                                }
+
+                                .filter-status-item,
+                                .filter-priority-item {
+                                    width: 100%;
+                                    height: 50px;
+                                    padding: 0px 7px;
+                                    align-items: center;
+                                    display: flex;
+                                    color: #fff;
+
+                                    &.in_progress,
+                                    &.low {
+                                        background: #faa919;
+                                    }
+
+                                    &.cancelled,
+                                    &.high {
+                                        background: #ff0000;
+                                    }
+
+                                    &.done,
+                                    &.medium {
+                                        background: #008000;
+                                    }
+
+                                    .single-status,
+                                    .single-priority {
+                                        font-size: 13px;
+                                    }
+                                }
+
+                                &::-webkit-scrollbar {
+                                    width: 5px;
+                                }
+
+                                &::-webkit-scrollbar-track {
+                                    background: #f1f1f1;
+                                }
+
+                                &::-webkit-scrollbar-thumb {
+                                    background: #c9c9c9;
+                                }
+
+                                &::-webkit-scrollbar-thumb:hover {
+                                    background: #555;
+                                }
+                            }
                         }
                     }
                 }

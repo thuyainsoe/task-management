@@ -10,8 +10,10 @@
                     <div v-else-if="tableColumn.property === 'person'" class="table-data-person">
                         <img :src="scope.row.assignment.assigned_user.username" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.assignment ? scope.row.assignment.assigned_user.name : '-' }}</span>
-                            <span class="person-position">{{ scope.row.assignment.assigned_user.position ? scope.row.assignment.assigned_user.position : '-' }}</span>
+                            <span class="person-name">{{ scope.row.assignment ? scope.row.assignment.assigned_user.name :
+                                '-' }}</span>
+                            <span class="person-position">{{ scope.row.assignment.assigned_user.position ?
+                                scope.row.assignment.assigned_user.position : '-' }}</span>
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'department'" class="table-data-department">
@@ -57,8 +59,10 @@
                         @click="assignedByClick(scope.row.assigned_by)">
                         <img :src="scope.row.assignment.assigned_by.username" alt="">
                         <div class="person-detail">
-                            <span class="person-name">{{ scope.row.assignment.assigned_by.name ? scope.row.assignment.assigned_by.name : '-' }}</span>
-                            <span class="person-position">{{ scope.row.assignment.assigned_by.position ? scope.row.assignment.assigned_by.position : '-'
+                            <span class="person-name">{{ scope.row.assignment.assigned_by.name ?
+                                scope.row.assignment.assigned_by.name : '-' }}</span>
+                            <span class="person-position">{{ scope.row.assignment.assigned_by.position ?
+                                scope.row.assignment.assigned_by.position : '-'
                             }}</span>
                         </div>
                     </div>
@@ -90,12 +94,12 @@
         <el-dialog v-model="isTagsDialog" title="Tags" width="30%" align-center>
             <div class="tag-detail">
                 <div class="tag-detail-current-user">
-                    <img src="../assets/images/profile.jpg" alt="">
+                    <img :src="cloneData.assignment.assigned_user.username" alt="">
                     <div class="user-content">
-                        <!-- <span class="username">{{ cloneData.name }}</span>
-                        <span class="position">{{ cloneData.position }}</span> -->
-                        <span class="username">Aung Aung</span>
-                        <span class="position">Frontend Developer</span>
+                        <span class="username">{{ cloneData.assignment.assigned_user.name ?
+                            cloneData.assignment.assigned_user.name : '-' }}</span>
+                        <span class="position">{{ cloneData.assignment.assigned_user.position ?
+                            cloneData.assignment.assigned_user.position : '-' }}</span>
                     </div>
                 </div>
                 <el-select value="" @change="changeTags" class="tag-input-dialog" popper-class="tags-dropdown" remote
@@ -104,9 +108,9 @@
                     </el-option>
                 </el-select>
                 <div class="tags-container">
-                    <span v-for="(tag, index) in cloneData.tags" :key="index" class="single-tag" @click="removeSingleTag">
-                        <el-tag>{{ tag.value }}</el-tag>
-                        <span class="cross-icon">
+                    <span v-for="(tag, index) in cloneData.tags" :key="index" class="single-tag">
+                        <el-tag>{{ tag.name ? tag.name : tag.value }}</el-tag>
+                        <span class="cross-icon" @click="deleteSingleTag(tag)">
                             <img src="../assets/svg-icons/faCross.svg" alt="">
                         </span>
                     </span>
@@ -114,6 +118,8 @@
             </div>
             <template #footer>
                 <span class="dialog-footer">
+                    <el-button type="primary"
+                        @click="updateTask(cloneData), isTagsDialog = !isTagsDialog">Confirm</el-button>
                     <el-button @click="isTagsDialog = false">Cancle</el-button>
                 </span>
             </template>
@@ -301,9 +307,6 @@ export default {
         }
     },
     methods: {
-        testing(data) {
-            // console.log(data)
-        },
         assignedByClick(data) {
             this.cloneData = data
             this.isAssignedByDialog = true
@@ -313,19 +316,20 @@ export default {
             this.isTagsDialog = true
         },
         changeTags(tag) {
-            // console.log(tag)
+            this.cloneData.tags.push(tag)
         },
-        removeSingleTag() {
-
+        deleteSingleTag(tag) {
+            this.cloneData.tags = this.cloneData.tags.filter((cloneTag) => cloneTag.id !== tag.id)
         },
         updateTask(data) {
-
             let dueDate = this.changeDateFormat(data.due_date)
+            let tagsArray = this.cloneData ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : []
             let variable = {
                 id: data.id,
                 status: data.status,
                 priority: data.priority,
-                due_date: dueDate
+                due_date: dueDate,
+                tags: tagsArray
             }
             this.$store.dispatch('tasks/updateTask', variable).then((res) => {
                 if (res.status) {

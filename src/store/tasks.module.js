@@ -28,7 +28,6 @@ const actions = {
   // Add Task
   async addTasks({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
-    console.log(taskData)
     try {
       const response = await axios.post('http://localhost:8000/api/tasks', taskData, {
         headers: {
@@ -51,7 +50,8 @@ const actions = {
           status: taskData.status,
           priority: taskData.priority,
           due_date: taskData.due_date,
-          comment: ''
+          comment: '',
+          tags: taskData.tagsArray
         },
         {
           headers: {

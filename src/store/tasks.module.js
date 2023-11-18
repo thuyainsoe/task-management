@@ -2,7 +2,8 @@ import axios from 'axios'
 
 const state = {
   tasks: [],
-  departmentIndex: null
+  departmentIndex: null,
+  tasksLoading: false
 }
 
 const mutations = {
@@ -11,6 +12,9 @@ const mutations = {
   },
   setDepartmentIndex(state, index) {
     state.departmentIndex = index
+  },
+  setTasksLoading(state, value) {
+    state.tasksLoading = value
   }
 }
 
@@ -20,6 +24,7 @@ const actions = {
     let token = JSON.parse(localStorage.getItem('token')).value
     let departmentIndex = state.departmentIndex
     try {
+      commit('setTasksLoading', true)
       const response = await axios.get('http://localhost:8000/api/tasks', {
         headers: {
           Authorization: `Bearer ${token}`
@@ -33,6 +38,9 @@ const actions = {
         }
       })
       commit('setTasks', response.data)
+      setTimeout(() => {
+        commit('setTasksLoading', false)
+      }, 500)
     } catch (error) {
       console.error(error)
     }
@@ -41,11 +49,15 @@ const actions = {
   async addTasks({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
     try {
+      commit('setTasksLoading', true)
       const response = await axios.post('http://localhost:8000/api/tasks', taskData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
+      setTimeout(() => {
+        commit('setTasksLoading', false)
+      }, 500)
       return response
     } catch (error) {
       return error
@@ -55,6 +67,7 @@ const actions = {
   async updateTask({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
     try {
+      commit('setTasksLoading', true)
       const response = await axios.put(
         `http://localhost:8000/api/tasks/${taskData.id}`,
         {
@@ -63,7 +76,7 @@ const actions = {
           priority: taskData.priority,
           due_date: taskData.due_date,
           tags: taskData.tags,
-          comment: '',
+          comment: ''
         },
         {
           headers: {
@@ -71,6 +84,9 @@ const actions = {
           }
         }
       )
+      setTimeout(() => {
+        commit('setTasksLoading', false)
+      }, 500)
       return response
     } catch (error) {
       return error
@@ -80,7 +96,8 @@ const actions = {
 
 const getters = {
   tasks: (state) => state.tasks,
-  departmentIndex: (state) => state.departmentIndex
+  departmentIndex: (state) => state.departmentIndex,
+  tasksLoading: (state) => state.tasksLoading
 }
 
 export default {

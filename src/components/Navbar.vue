@@ -6,7 +6,7 @@
             </div>
             <div class="navbar-roles">
                 <img src="../assets/svg-icons/faUser.svg" alt="">
-                <span>Admin</span>
+                <span>{{ userRole }}</span>
             </div>
         </div>
         <div class="navbar-right">
@@ -128,6 +128,9 @@ export default {
         },
         notiCount() {
             return this.$store.getters['notifications/notiCount'];
+        },
+        userRole() {
+            return JSON.parse(localStorage.getItem('token')).authUser.role;
         }
     },
     methods: {
@@ -248,7 +251,8 @@ export default {
             align-items: center;
 
             span {
-                color: #000
+                color: #000;
+                text-transform: capitalize;
             }
         }
     }

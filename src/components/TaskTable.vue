@@ -1,12 +1,13 @@
 <template>
     <div class="task-table-container">
         <el-table :data="tasks" style="width: 100%; height: 100%" :border="true" :scrollbar-always-on="true"
-            class="data-table">
-            <el-table-column type='selection' width='40'></el-table-column>
+            class="data-table" v-loading="tasksLoading">
+            <!-- <el-table-column type='selection' width='40'></el-table-column>s -->
             <el-table-column v-for="(tableColumn, index) in tableColumns" :key="index" :fixed="tableColumn.fixed"
                 :label="tableColumn.label" :width="tableColumn.width">
                 <template v-slot="scope">
-                    <div v-if="tableColumn.property === 'task'"><span>{{ scope.row.description }}</span></div>
+                    <div v-if="tableColumn.property === 'task_name'"><span>{{ scope.row.name }}</span></div>
+                    <div v-if="tableColumn.property === 'task_description'"><span>{{ scope.row.description }}</span></div>
                     <div v-else-if="tableColumn.property === 'person'" class="table-data-person">
                         <img :src="scope.row.assignment.assigned_user.username" alt="">
                         <div class="person-detail">
@@ -28,7 +29,8 @@
                                 :label="item.label" :class="item.class" />
                         </el-select>
                         <div class="label-show">
-                            <span v-if="scope.row.status === 'in_progress'" class="in-progress">{{ scope.row.status
+                            <span v-if="scope.row.status === 'in_progress'" class="in-progress">{{
+                                formattedStatus(scope.row.status)
                             }}</span>
                             <span v-else-if="scope.row.status === 'cancelled'" class="cancelled">{{ scope.row.status
                             }}</span>
@@ -39,7 +41,7 @@
                     <div v-else-if="tableColumn.property === 'priority'" class="table-data-priority">
                         <el-select v-model="scope.row.priority" :class="getStatusClass(scope.row.status)"
                             class="m-2 status-selector" placeholder="Select" @change="updateTask(scope.row)"
-                            :disabled="!isSelfTask(scope.row) || isAdmin">
+                            :disabled="!isSelfTask(scope.row) && !isAdmin">
                             <el-option v-for="item in priorityOptions" :key="item.value" :value="item.value"
                                 :label="item.label" :class="item.class" />
                         </el-select>
@@ -161,68 +163,16 @@ export default {
             cloneData: null,
             tagInput: '',
             remarkDrawer: false,
-            tableData: [
-                {
-                    content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque, molestias.',
-                    name: 'Aung Aung',
-                    status: 'in progress',
-                    position: 'Customer Support',
-                    priority: 'high',
-                    department: 'Adminstration',
-                    deadlines: '2023-2-20',
-                    tags: [
-                        {
-                            id: 39,
-                            value: 'Uniforms'
-                        },
-                        {
-                            id: 40,
-                            value: 'Housekeeping'
-                        },
-                        {
-                            id: 41,
-                            value: 'Medical'
-                        }
-                    ],
-                    assigned_by: {
-                        name: 'Thu Yain Soe',
-                        position: 'Human Resource',
-                        department: 'Adminstration'
-                    }
-                },
-                {
-                    content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Neque, molestias.',
-                    name: 'Kyaw Myo Htun',
-                    status: 'completed',
-                    position: 'Frontend Developer',
-                    priority: 'low',
-                    department: 'IT',
-                    deadlines: '2023-2-10',
-                    tags: [
-                        {
-                            id: 36,
-                            value: 'Health and Safety'
-                        },
-                        {
-                            id: 37,
-                            value: 'Finance'
-                        },
-                        {
-                            id: 38,
-                            value: 'Accounts'
-                        },
-                    ],
-                    assigned_by: {
-                        name: 'Kyaw Min Tun',
-                        position: 'Human Resource',
-                        department: 'Adminstration'
-                    }
-                },
-            ],
             tableColumns: [
                 {
-                    label: 'Task',
-                    property: 'task',
+                    label: 'Task Name',
+                    property: 'task_name',
+                    width: 200,
+                    fixed: true
+                },
+                {
+                    label: 'Task Description',
+                    property: 'task_description',
                     width: 500,
                     fixed: true
                 },
@@ -324,6 +274,9 @@ export default {
         },
         isAdmin() {
             return JSON.parse(localStorage.getItem('token')).authUser.role === 'admin';
+        },
+        tasksLoading() {
+            return this.$store.getters['tasks/tasksLoading']
         }
     },
     methods: {
@@ -389,6 +342,11 @@ export default {
         isSelfTask(data) {
             let currentUserId = JSON.parse(localStorage.getItem('token')).authUser.id;
             return data.assignment.assigned_user.id === currentUserId
+        },
+        formattedStatus(data) {
+            return data.replace(/_/g, ' ').replace(/\b\w/g, function (char) {
+                return char.toUpperCase();
+            });;
         }
     },
     async mounted() {
@@ -579,6 +537,7 @@ export default {
 
         .table-data-tags {
             display: flex;
+            flex-wrap: wrap;
             gap: 5px;
             cursor: pointer;
         }

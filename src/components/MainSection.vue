@@ -77,7 +77,10 @@
         <div class="newtask-form-wrapper">
             <form>
                 <div class="newtask-form-item">
-                    <input type="text" placeholder="Task" v-model="newTask.description">
+                    <input type="text" placeholder="Task Name" v-model="newTask.name">
+                </div>
+                <div class="newtask-form-item">
+                    <input type="text" placeholder="Task Description" v-model="newTask.description">
                 </div>
                 <div class="newtask-form-calendar">
                     <el-date-picker class="calendar" v-model="newTask.deadlines" type="date" placeholder="Deadlines" />
@@ -147,6 +150,7 @@ export default {
                 },
             ],
             newTask: {
+                name: '',
                 description: '',
                 assigned_user_id: '',
                 status: '',
@@ -154,14 +158,7 @@ export default {
                 priority: '',
                 department: '',
                 deadlines: '',
-                tags: [
-
-                ],
-                assigned_by: {
-                    name: '',
-                    position: '',
-                    department: ''
-                }
+                tags: [],
             },
             persons: [
                 {
@@ -223,7 +220,7 @@ export default {
             let user = JSON.parse(localStorage.getItem('token')).authUser;
             let tagsArray = this.newTask.tags.map(tag => tag.id)
             let taskData = {
-                name: "Thu Yain Soe",
+                name: this.newTask.name,
                 description: this.newTask.description,
                 priority: this.newTask.priority,
                 due_date: this.changeDateFormat(this.newTask.deadlines),
@@ -528,6 +525,7 @@ export default {
                                     align-items: center;
                                     display: flex;
                                     color: #fff;
+                                    cursor: pointer;
 
                                     &.in_progress,
                                     &.low {

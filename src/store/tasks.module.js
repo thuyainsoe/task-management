@@ -20,7 +20,7 @@ const actions = {
           Authorization: `Bearer ${token}`
         },
         params: {
-          search: searchText ? searchText : ''
+          search: searchText ? searchText : '',
         }
       })
       commit('setTasks', response.data)
@@ -45,6 +45,7 @@ const actions = {
   // Update Task
   async updateTask({ commit }, taskData) {
     let token = JSON.parse(localStorage.getItem('token')).value
+    console.log(taskData)
     try {
       const response = await axios.put(
         `http://localhost:8000/api/tasks/${taskData.id}`,
@@ -53,8 +54,8 @@ const actions = {
           status: taskData.status,
           priority: taskData.priority,
           due_date: taskData.due_date,
+          tags: taskData.tags,
           comment: '',
-          tags: taskData.tagsArray
         },
         {
           headers: {

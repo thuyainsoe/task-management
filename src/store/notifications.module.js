@@ -22,7 +22,6 @@ const actions = {
           Authorization: `Bearer ${token}`
         }
       })
-      console.log(response)
       commit('setNotifications', response.data)
       commit('setNotiCount', response.data.length)
     } catch (error) {

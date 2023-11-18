@@ -15,7 +15,7 @@
                 <span class="noti-count" v-if="notiCount !== 0">{{ notiCount }}</span>
 
                 <!-- For Noti Dialog -->
-                <div class="navbar-noti-dialog" v-if="showNotiDialog">
+                <div class="navbar-noti-dialog" v-if="showNotiDialog && notiCount !== 0">
                     <div v-for="noti in notifications" :key="noti.id" class="navbar-noti-item-container">
                         <!-- <img src="../assets/images/profile.jpg" alt="" class="navbar-noti-profile-img"> -->
                         <div class="navbar-noti-detail">
@@ -24,6 +24,9 @@
                             <span class="navbar-noti-date">{{ getTimeAgo(noti.created_at) }}</span>
                         </div>
                     </div>
+                </div>
+                <div class="navbar-noti-no-data" v-else-if="showNotiDialog && notiCount == 0">
+                    There are no updates or notifications.
                 </div>
             </div>
             <div class="navbar-user">
@@ -103,7 +106,6 @@ export default {
             showUserDetail: false,
             showNotiDialog: false,
             isUserDialog: false,
-            notiCount: 0,
             userDetailEmail: 'hello'
         }
     },
@@ -191,7 +193,7 @@ export default {
         let user = JSON.parse(localStorage.getItem('token')).authUser;
         window.Echo.channel('task-assigned-' + user.id)
             .listen('TaskAssigned', (data) => {
-                this.notiCount += 1
+                this.$store.commit('notifications/setNotiCount', data.noti_count);
             });
     }
 }
@@ -270,6 +272,25 @@ export default {
                 border-radius: 50%;
             }
 
+            .navbar-noti-no-data {
+                z-index: 100;
+                position: absolute;
+                background-color: #fff;
+                top: 39px;
+                right: 0;
+                width: 300px;
+                height: 100px;
+                border: 1px solid #eee;
+                border-radius: 5px;
+                -webkit-box-shadow: 0px 1px 15px 1px #C2C2C2;
+                box-shadow: 0px 1px 15px 1px #C2C2C2;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2px;
+                font-size: 13px;
+            }
+
             .navbar-noti-dialog {
                 z-index: 100;
                 position: absolute;
@@ -277,7 +298,7 @@ export default {
                 top: 39px;
                 right: 0;
                 width: 300px;
-                height: 300px;
+                max-height: 300px;
                 overflow-y: scroll;
                 border: 1px solid #eee;
                 border-radius: 5px;

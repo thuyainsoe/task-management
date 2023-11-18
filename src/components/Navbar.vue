@@ -11,33 +11,17 @@
         </div>
         <div class="navbar-right">
             <div class="navbar-noti">
-                <img src="../assets/svg-icons/faBell.svg" alt="" @click="showNotiDialog = !showNotiDialog">
+                <img src="../assets/svg-icons/faBell.svg" alt="" @click="clickNoti">
                 <span class="noti-count" v-if="notiCount !== 0">{{ notiCount }}</span>
 
                 <!-- For Noti Dialog -->
                 <div class="navbar-noti-dialog" v-if="showNotiDialog">
-                    <div class="navbar-noti-item-container">
-                        <img src="../assets/images/profile.jpg" alt="" class="navbar-noti-profile-img">
+                    <div v-for="noti in notifications" :key="noti.id" class="navbar-noti-item-container">
+                        <!-- <img src="../assets/images/profile.jpg" alt="" class="navbar-noti-profile-img"> -->
                         <div class="navbar-noti-detail">
-                            <span class="navbar-noti-user-email">thuyainsoe163361@gmail.com</span>
-                            <span class="navbar-noti-content">Lorem ipsum dolor sit amet consectetur adipisicing elit</span>
-                            <span class="navbar-noti-date">2hrs ago</span>
-                        </div>
-                    </div>
-                    <div class="navbar-noti-item-container">
-                        <img src="../assets/images/profile.jpg" alt="" class="navbar-noti-profile-img">
-                        <div class="navbar-noti-detail">
-                            <span class="navbar-noti-user-email">thuyainsoe163361@gmail.com</span>
-                            <span class="navbar-noti-content">Lorem ipsum dolor sit amet consectetur adipisicing elit</span>
-                            <span class="navbar-noti-date">2hrs ago</span>
-                        </div>
-                    </div>
-                    <div class="navbar-noti-item-container">
-                        <img src="../assets/images/profile.jpg" alt="" class="navbar-noti-profile-img">
-                        <div class="navbar-noti-detail">
-                            <span class="navbar-noti-user-email">thuyainsoe163361@gmail.com</span>
-                            <span class="navbar-noti-content">Lorem ipsum dolor sit amet consectetur adipisicing elit</span>
-                            <span class="navbar-noti-date">2hrs ago</span>
+                            <!-- <span class="navbar-noti-user-email">thuyainsoe163361@gmail.com</span> -->
+                            <span class="navbar-noti-content">{{ noti.message }}</span>
+                            <span class="navbar-noti-date">{{ getTimeAgo(noti.created_at) }}</span>
                         </div>
                     </div>
                 </div>
@@ -112,6 +96,7 @@ import departments from '../data/departments';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { ElNotification } from 'element-plus'
+import moment from 'moment';
 export default {
     data() {
         return {
@@ -133,14 +118,24 @@ export default {
         authUser() {
             return this.$store.getters['users/currentUser'];
         },
+        notifications() {
+            return this.$store.getters['notifications/notifications'];
+        },
         departments() {
             return departments
+        },
+        notiCount() {
+            return this.$store.getters['notifications/notiCount'];
         }
     },
     methods: {
         logoutHandler() {
             localStorage.removeItem('token');
             this.$router.push('/login').catch(err => { console.log(err) });
+        },
+        clickNoti() {
+            this.showNotiDialog = !this.showNotiDialog
+            this.$store.dispatch("notifications/fetchNotifications")
         },
         clickMyProfile() {
             this.isUserDialog = !this.isUserDialog
@@ -160,12 +155,29 @@ export default {
                 type: 'success',
                 duration: 2000
             })
-        }
+        },
+        getTimeAgo(timestamp) {
+            const now = moment();
+            const targetTime = moment(timestamp);
+            const diffMinutes = now.diff(targetTime, 'minutes');
+            const diffHours = now.diff(targetTime, 'hours');
+            const diffDays = now.diff(targetTime, 'days');
+            const diffWeeks = now.diff(targetTime, 'weeks');
+
+            if (diffMinutes < 60) {
+                return `${diffMinutes} minutes ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hours ago`;
+            } else if (diffDays < 7) {
+                return `${diffDays} days ago`;
+            } else {
+                return `${diffWeeks} weeks ago`;
+            }
+        },
     },
     mounted() {
-        // this.$store.dispatch("notification/fetchNotifications")
+        this.$store.dispatch("notifications/fetchNotifications")
         this.$store.dispatch("users/fetchUsers")
-
         window.Pusher = Pusher;
 
         window.Echo = new Echo({
@@ -244,12 +256,12 @@ export default {
             .noti-count {
                 position: absolute;
                 background: red;
-                width: 10px;
-                height: 10px;
+                width: 11px;
+                height: 11px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: bold;
                 color: #fff;
                 top: -10px;
@@ -264,8 +276,9 @@ export default {
                 background-color: #fff;
                 top: 39px;
                 right: 0;
-                width: 360px;
-                height: auto;
+                width: 300px;
+                height: 300px;
+                overflow-y: scroll;
                 border: 1px solid #eee;
                 border-radius: 5px;
                 -webkit-box-shadow: 0px 1px 15px 1px #C2C2C2;
@@ -300,7 +313,7 @@ export default {
 
                         .navbar-noti-content {
 
-                            font-size: 12px;
+                            font-size: 13px;
                             overflow: hidden;
                             white-space: wrap;
                         }
@@ -314,6 +327,22 @@ export default {
                     &:nth-child(even) {
                         background-color: #ececec;
                     }
+                }
+
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: #c9c9c9;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                    background: #555;
                 }
             }
         }
@@ -443,8 +472,6 @@ export default {
                 outline: none;
             }
         }
-
-        .department-selector {}
     }
 }
 </style>

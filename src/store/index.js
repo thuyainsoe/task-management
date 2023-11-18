@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import AuthModule from './auth.module'
 import TasksModule from './tasks.module'
-import NotificationModule from './notification.module'
+import NotificationModule from './notifications.module'
 import UsersModule from './users.module'
 
 export default createStore({

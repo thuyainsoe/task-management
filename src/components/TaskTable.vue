@@ -17,7 +17,7 @@
                         </div>
                     </div>
                     <div v-else-if="tableColumn.property === 'department'" class="table-data-department">
-                        <span>{{ scope.row.department ? scope.row.department : '-' }}</span>
+                        <span>{{ scope.row.assignment.assigned_user.department ?  scope.row.assignment.assigned_user.department.name : '-'}}</span>
                     </div>
                     <div v-else-if="tableColumn.property === 'status'" class="table-data-status">
                         <el-select v-model="scope.row.status" :class="getStatusClass(scope.row.status)"
@@ -56,7 +56,7 @@
                         </span>
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"
-                        @click="assignedByClick(scope.row.assigned_by)">
+                        @click="assignedByClick(scope.row)">
                         <img :src="scope.row.assignment.assigned_by.username" alt="">
                         <div class="person-detail">
                             <span class="person-name">{{ scope.row.assignment.assigned_by.name ?
@@ -77,11 +77,26 @@
         <!-- Assigned By Dialog -->
         <el-dialog v-model="isAssignedByDialog" title="Assigned By" width="20%" align-center>
             <div class="assigned-by-detail">
-                <img src="../assets/images/profile.jpg" alt="">
-                <span class="assigned-by-detail-name">{{ cloneData ? cloneData.name : '' }}</span>
-                <span class="assigned-by-detail-position">{{ cloneData ? cloneData.position : '' }}</span>
-                <span class="assigned-by-detail-department">{{ cloneData ? cloneData.department : '' }}
-                    Department</span>
+                <div class="assigned-by-detail-header">
+                    <img :src="cloneData.assignment.assigned_by.username" alt="">
+                    <span class="assigned-by-detail-name">{{ cloneData.assignment.assigned_by ?
+                        cloneData.assignment.assigned_by.name : '' }}</span>
+                </div>
+                <span class="assigned-by-detail-position">
+                    <span>
+                        Position
+                    </span>
+                    : {{ cloneData.assignment.assigned_by ?
+                        cloneData.assignment.assigned_by.position : '' }}
+                </span>
+                <span class="assigned-by-detail-department">
+                    <span>
+                        Department
+                    </span>
+                    : {{ cloneData.assignment.assigned_by ?
+                        cloneData.assignment.assigned_by.department.name : '' }}
+                    Department
+                </span>
             </div>
             <template #footer>
                 <span class="dialog-footer">
@@ -568,25 +583,37 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        // align-items: center;
         gap: 20px;
 
-        img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 4px solid $blue-color;
-        }
+        .assigned-by-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
 
-        .assigned-by-detail-name {
-            font-weight: bold;
-            font-size: 18px;
+            img {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: 4px solid $blue-color;
+            }
+
+            .assigned-by-detail-name {
+                font-weight: bold;
+                font-size: 18px;
+            }
         }
 
         .assigned-by-detail-position,
         .assigned-by-detail-department {
             font-size: 14px;
             font-weight: 500;
+
+            span {
+                width: 80px;
+                display: inline-block;
+                font-weight: 700;
+            }
         }
     }
 

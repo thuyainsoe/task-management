@@ -22,7 +22,9 @@ class TaskController extends Controller
         $tasks = Task::query();
         if($request->search) {
             
-            $tasks_id = Task::where('name', 'like', "%$request->search%")->pluck('id')->toArray();
+            $tasks_id = Task::where('name', 'like', "%$request->search%")
+                            ->orWhere('description', 'like', "%$request->search%")
+                            ->pluck('id')->toArray();
             
             $tasks_id_by_user = Assignment::whereIn('assigned_user_id', User::query()
                                 ->where('name', 'like', "%$request->search%")
@@ -49,6 +51,14 @@ class TaskController extends Controller
             $tasks = $tasks->whereHas('assignment', function($assignment) use($user_ids) {
                 $assignment->whereIn('assigned_user_id', $user_ids);
             });
+        }
+
+        if($request->status) {
+            $tasks = $tasks->where('status', $request->status);
+        }
+
+        if($request->priority) {
+            $tasks = $tasks->where('priority', $request->priority);
         }
 
         return $tasks->with('tags', 'assignment.assignedUser.department', 'assignment.assignedBy.department')->orderByDesc('updated_at')->get();
@@ -117,6 +127,10 @@ class TaskController extends Controller
             ];
 
             Comment::create($comment);
+        }
+
+        if ($request->tags) {
+            $task->tags()->sync($request->tags);
         }
 
         $user = auth()->user();

@@ -146,19 +146,29 @@
         </el-dialog>
 
         <!-- Remark Drawer -->
-        :title="cloneData.description"
-        <el-drawer v-model="remarkDrawer" direction="rtl">
+        <!-- :title="cloneData.description" -->
+        <el-drawer v-model="remarkDrawer" :title="cloneData ? cloneData.description : ''" direction="rtl">
             <div class="remark-wrapper">
                 <div class="remark-person-detail">
                     <img :src="cloneData.assignment.assigned_user.username" alt="">
                     <p>{{ cloneData.assignment.assigned_user.name }}</p>
                 </div>
                 <div class="remark-detail-show-container">
-                    There are no comments as of now.
+                    <div v-if="responseFiles.length < 1 && responseComments.length < 1" class="no-file-desc">
+                        There are no comments as of now.
+                    </div>
+                    <div v-for="file in responseFiles" :key="file.id" class="file-link">
+                        <img src="../assets/svg-icons/faTextfile.svg" alt="">
+                        {{ file.file_name }}
+                    </div>
+                    <div v-for="comment in responseComments" :key="comment.id" class="comment-text">
+                        <img src="../assets/svg-icons/faMessageBlack.svg" alt="">
+                        {{ comment.description }}
+                    </div>
                 </div>
                 <div class="remark-input-field-container">
                     <div class="remark-text-input">
-                        <input type="text" placeholder="Write an update">
+                        <input type="text" placeholder="Write an update" v-model="updateText">
                     </div>
                     <div class="remark-buttons">
                         <div class="file-upload">
@@ -171,11 +181,10 @@
                                 Upload
                             </button>
                         </div>
-                        <button class="remark-update-button">
+                        <button class="remark-update-button" @click="clickUpdateText">
                             Update
                         </button>
                     </div>
-
                 </div>
             </div>
         </el-drawer>
@@ -194,9 +203,12 @@ export default {
             isTagsDialog: false,
             cloneData: null,
             tagInput: '',
+            updateText: '',
             remarkDrawer: false,
             uploadStatus: 'Choose File',
             file: null,
+            responseFiles: [],
+            responseComments: [],
             tableColumns: [
                 {
                     label: 'Task Name',
@@ -373,6 +385,10 @@ export default {
         async remarkClick(data) {
             this.remarkDrawer = !this.remarkDrawer
             this.cloneData = data
+            await this.fetchFiles()
+            await this.fetchComments()
+        },
+        async fetchFiles() {
             try {
                 let token = JSON.parse(localStorage.getItem('token')).value
                 const response = await axios.get(`http://localhost:8000/api/tasks/${this.cloneData.id}/files`, {
@@ -380,7 +396,21 @@ export default {
                         Authorization: `Bearer ${token}`
                     }
                 })
+                this.responseFiles = response.data
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async fetchComments() {
+            try {
+                let token = JSON.parse(localStorage.getItem('token')).value
+                const response = await axios.get(`http://localhost:8000/api/tasks/${this.cloneData.id}/comments`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 console.log(response)
+                this.responseComments = response.data
             } catch (error) {
                 console.error(error)
             }
@@ -413,8 +443,11 @@ export default {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
                 }
-            }).then((res) => {
+            }).then(async(res) => {
                 this.uploadStatus = 'File uploaded successfully'
+                this.file = null
+                await this.fetchFiles()
+                await this.fetchComments()
             }).catch((error) => {
                 console.log(error)
                 this.uploadStatus = 'Error uploading file'
@@ -423,6 +456,12 @@ export default {
         handleFileUpload(event) {
             this.file = event.target.files[0]
             this.uploadStatus = event.target.files[0].name
+        },
+        async clickUpdateText() {
+            await this.$store.dispatch('tasks/updateComment', { comment: this.updateText, id: this.cloneData.id })
+            await this.fetchFiles()
+            await this.fetchComments()
+            this.updateText = ''
         }
     },
     async mounted() {
@@ -736,6 +775,7 @@ export default {
             gap: 6px;
             padding-left: 5px;
             border-left: 2px solid $red-color;
+            margin-bottom: 20px;
 
             img {
                 border-radius: 50%;
@@ -752,11 +792,34 @@ export default {
             width: 100%;
             min-height: 100px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 15px;
+            gap: 10px;
             border: 1px solid #000;
             border-radius: 5px;
             font-size: 14px;
+            flex-direction: column;
+            position: relative;
+
+            .no-file-desc {
+                align-self: center;
+                top: 50%;
+                transform: translateY(-50%);
+                position: absolute;
+            }
+
+            .file-link,
+            .comment-text {
+                display: flex;
+                align-items: center;
+                color: $blue-color;
+                gap: 8px;
+                cursor: pointer;
+            }
+
+            .comment-text {
+                color: #000;
+                cursor: initial;
+            }
         }
 
         .remark-input-field-container {

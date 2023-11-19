@@ -75,8 +75,7 @@ const actions = {
           status: taskData.status,
           priority: taskData.priority,
           due_date: taskData.due_date,
-          tags: taskData.tags,
-          comment: ''
+          tags: taskData.tags
         },
         {
           headers: {
@@ -87,6 +86,26 @@ const actions = {
       setTimeout(() => {
         commit('setTasksLoading', false)
       }, 500)
+      return response
+    } catch (error) {
+      return error
+    }
+  },
+
+  async updateComment({ commit }, payload) {
+    let token = JSON.parse(localStorage.getItem('token')).value
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/tasks/${payload.id}`,
+        {
+          comment: payload.comment
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
       return response
     } catch (error) {
       return error

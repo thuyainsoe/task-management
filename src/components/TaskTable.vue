@@ -331,11 +331,11 @@ export default {
     },
     methods: {
         assignedByClick(data) {
-            this.cloneData = data
+            this.cloneData = { ...data }
             this.isAssignedByDialog = true
         },
         tagsClick(data) {
-            this.cloneData = data
+            this.cloneData = { ...data }
             this.isTagsDialog = true
         },
         changeTags(tag) {
@@ -346,7 +346,7 @@ export default {
         },
         updateTask(data) {
             let dueDate = this.changeDateFormat(data.due_date)
-            let tagsArray = this.cloneData ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : []
+            let tagsArray = this.cloneData.tags.length > 0 ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : []
             let variable = {
                 id: data.id,
                 status: data.status,
@@ -388,7 +388,7 @@ export default {
         },
         async remarkClick(data) {
             this.remarkDrawer = !this.remarkDrawer
-            this.cloneData = data
+            this.cloneData = { ...data }
             await this.fetchFiles()
             await this.fetchComments()
         },
@@ -480,7 +480,7 @@ export default {
     watch: {
         isTagsDialog: {
             handler(value) {
-                if(value === false) {
+                if (value === false) {
                     this.cloneData.tags = []
                 }
             }
@@ -680,6 +680,7 @@ export default {
                 align-items: center;
                 gap: 6px;
                 font-size: 13px;
+
                 img {
                     width: 14px;
                 }

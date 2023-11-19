@@ -380,7 +380,6 @@ export default {
                         Authorization: `Bearer ${token}`
                     }
                 })
-
                 console.log(response)
             } catch (error) {
                 console.error(error)

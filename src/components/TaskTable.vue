@@ -73,6 +73,7 @@
                     </div>
                     <div v-else-if="tableColumn.property === 'remark'" class="table-data-remark"
                         @click="remarkClick(scope.row)">
+                        <img src="../assets/svg-icons/faMessage.svg" alt="">
                     </div>
                 </template>
             </el-table-column>
@@ -145,8 +146,38 @@
         </el-dialog>
 
         <!-- Remark Drawer -->
-        <el-drawer v-model="remarkDrawer" title="I am the title" direction="rtl">
-            <span>Hi, there!</span>
+        :title="cloneData.description"
+        <el-drawer v-model="remarkDrawer" direction="rtl">
+            <div class="remark-wrapper">
+                <div class="remark-person-detail">
+                    <img :src="cloneData.assignment.assigned_user.username" alt="">
+                    <p>{{ cloneData.assignment.assigned_user.name }}</p>
+                </div>
+                <div class="remark-detail-show-container">
+                    There are no comments as of now.
+                </div>
+                <div class="remark-input-field-container">
+                    <div class="remark-text-input">
+                        <input type="text" placeholder="Write an update">
+                    </div>
+                    <div class="remark-buttons">
+                        <div class="file-upload">
+                            <input type="file" ref="fileInput" @change="handleFileUpload" />
+                            <span class="upload-container">
+                                <img src="../assets/svg-icons/faFileupload.svg" alt="" @click="uploadIconClick">
+                                <div v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</div>
+                            </span>
+                            <button class="remark-file-button" @click="fileUploadClick">
+                                Upload
+                            </button>
+                        </div>
+                        <button class="remark-update-button">
+                            Update
+                        </button>
+                    </div>
+
+                </div>
+            </div>
         </el-drawer>
     </div>
 </template>
@@ -154,6 +185,7 @@
 <script>
 import tagsOptions from '../data/tagsOptions';
 import { ElNotification } from 'element-plus'
+import axios from 'axios'
 
 export default {
     data() {
@@ -163,6 +195,8 @@ export default {
             cloneData: null,
             tagInput: '',
             remarkDrawer: false,
+            uploadStatus: 'Choose File',
+            file: null,
             tableColumns: [
                 {
                     label: 'Task Name',
@@ -214,7 +248,7 @@ export default {
                 {
                     label: 'Remark',
                     property: 'remark',
-                    width: 400
+                    width: 100
                 }
             ],
             statusOptions: [
@@ -336,8 +370,21 @@ export default {
 
             return formattedDateString
         },
-        remarkClick(data) {
+        async remarkClick(data) {
             this.remarkDrawer = !this.remarkDrawer
+            this.cloneData = data
+            try {
+                let token = JSON.parse(localStorage.getItem('token')).value
+                const response = await axios.get(`http://localhost:8000/tasks/${this.cloneData.id}/files`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                console.log(response)
+            } catch (error) {
+                console.error(error)
+            }
         },
         isSelfTask(data) {
             let currentUserId = JSON.parse(localStorage.getItem('token')).authUser.id;
@@ -347,6 +394,36 @@ export default {
             return data.replace(/_/g, ' ').replace(/\b\w/g, function (char) {
                 return char.toUpperCase();
             });;
+        },
+        uploadIconClick() {
+            this.$nextTick(() => {
+                this.$refs.fileInput.click()
+            })
+        },
+        fileUploadClick() {
+            if (!this.file) {
+                this.uploadStatus = 'Please select a file.';
+                return;
+            }
+            let formData = new FormData();
+            formData.append('file', this.file);
+            formData.append('task_id', this.cloneData.id)
+            let token = JSON.parse(localStorage.getItem('token')).value
+            axios.post('http://localhost:8000/api/files', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`
+                }
+            }).then((res) => {
+                this.uploadStatus = 'File uploaded successfully'
+            }).catch((error) => {
+                console.log(error)
+                this.uploadStatus = 'Error uploading file'
+            })
+        },
+        handleFileUpload(event) {
+            this.file = event.target.files[0]
+            this.uploadStatus = event.target.files[0].name
         }
     },
     async mounted() {
@@ -646,6 +723,107 @@ export default {
                     }
                 }
             }
+        }
+    }
+
+    .remark-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .remark-person-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-left: 5px;
+            border-left: 2px solid $red-color;
+
+            img {
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+
+        .remark-detail-show-container {
+            width: 100%;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #000;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .remark-input-field-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            .remark-text-input {
+                input {
+                    width: 100%;
+                    height: 50px;
+                    border-radius: 5px;
+                    padding-left: 10px;
+                    border: 1px solid #000;
+
+                    &:focus {
+                        outline: none;
+                    }
+                }
+            }
+
+            .remark-buttons {
+                margin-top: 10px;
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+
+                .file-upload {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+
+                    .upload-container {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+
+                        img {
+                            width: 24px;
+                            cursor: pointer;
+                        }
+
+                        .upload-status {
+                            font-size: 13px;
+                        }
+                    }
+
+
+                    input {
+                        display: none;
+                    }
+                }
+
+                .remark-update-button,
+                .remark-file-button {
+                    width: max-content;
+                    padding: 8px 14px;
+                    border-radius: 3px;
+                    border: none;
+                    background-color: $blue-color;
+                    color: #fff;
+                    cursor: pointer;
+                }
+            }
+
+
         }
     }
 }

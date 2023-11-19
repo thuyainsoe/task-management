@@ -159,7 +159,9 @@
                     </div>
                     <div v-for="file in responseFiles" :key="file.id" class="file-link">
                         <img src="../assets/svg-icons/faTextfile.svg" alt="" @click="downloadFile(file)">
-                        {{ file.file_name }}
+                        <a :href="`http://localhost:8000/api/files/${file.id}/download`">
+                            {{ file.file_name }}
+                        </a>
                     </div>
                     <div v-for="comment in responseComments" :key="comment.id" class="comment-text">
                         <img src="../assets/svg-icons/faMessageBlack.svg" alt="">
@@ -323,7 +325,7 @@ export default {
         },
         tasksLoading() {
             return this.$store.getters['tasks/tasksLoading']
-        }
+        },
     },
     methods: {
         assignedByClick(data) {

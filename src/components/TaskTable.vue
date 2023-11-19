@@ -59,6 +59,10 @@
                         <span v-for="(tag, index) in scope.row.tags" :key="index">
                             <el-tag size="small">{{ tag.name }}</el-tag>
                         </span>
+                        <span class="table-add-task" v-if="scope.row.tags.length < 1">
+                            <img src="../assets/svg-icons/faAdd.svg" alt="">
+                            Add new task
+                        </span>
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"
                         @click="assignedByClick(scope.row)">
@@ -473,6 +477,15 @@ export default {
     async mounted() {
         this.$store.dispatch('tasks/fetchTasks')
     },
+    watch: {
+        isTagsDialog: {
+            handler(value) {
+                if(value === false) {
+                    this.cloneData.tags = []
+                }
+            }
+        }
+    }
 }
 </script>
 
@@ -661,6 +674,16 @@ export default {
             flex-wrap: wrap;
             gap: 5px;
             cursor: pointer;
+
+            .table-add-task {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                img {
+                    width: 14px;
+                }
+            }
         }
 
         .table-data-remark {

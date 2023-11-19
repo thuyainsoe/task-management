@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\TaskAssigned;
+use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\Comment;
@@ -146,7 +147,7 @@ class TaskController extends Controller
 
         Notification::create($notification);
 
-        event(new TaskAssigned($user));
+        event(new TaskUpdated());
 
         return $task;
 

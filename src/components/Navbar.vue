@@ -199,6 +199,14 @@ export default {
                 this.$store.commit('notifications/setNotiCount', data.noti_count);
             });
 
+        window.Echo.channel('task-updated')
+            .listen('TaskUpdated', (data) => {
+                let noti_count = this.notiCount + 1;
+                console.log("Call by task updated")
+                console.log(noti_count);
+                this.$store.commit('notifications/setNotiCount', noti_count);
+            });
+
         document.body.addEventListener('click', (event) => {
             if (this.$refs.navbarNoti && !this.$refs.navbarNoti.contains(event.target)) {
                 this.showNotiDialog = false

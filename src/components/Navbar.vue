@@ -88,7 +88,7 @@
         </div>
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="isUserDialog = false">Cancle</el-button>
+                <el-button @click="isUserDialog = false">Cancel</el-button>
             </span>
         </template>
     </el-dialog>

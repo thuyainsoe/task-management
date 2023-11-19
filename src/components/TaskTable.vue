@@ -105,7 +105,7 @@
             </div>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="isAssignedByDialog = false">Cancle</el-button>
+                    <el-button @click="isAssignedByDialog = false">Cancel</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -140,7 +140,7 @@
                 <span class="dialog-footer">
                     <el-button type="primary"
                         @click="updateTask(cloneData), isTagsDialog = !isTagsDialog">Confirm</el-button>
-                    <el-button @click="isTagsDialog = false">Cancle</el-button>
+                    <el-button @click="isTagsDialog = false">Cancel</el-button>
                 </span>
             </template>
         </el-dialog>

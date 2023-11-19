@@ -375,7 +375,7 @@ export default {
             this.cloneData = data
             try {
                 let token = JSON.parse(localStorage.getItem('token')).value
-                const response = await axios.get(`http://localhost:8000/tasks/${this.cloneData.id}/files`, {
+                const response = await axios.get(`http://localhost:8000/api/tasks/${this.cloneData.id}/files`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

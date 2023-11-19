@@ -16,7 +16,7 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        return File::query()->where('task_id', $request->task_id)->orderByDesce('created_at')->get();
+        return File::query()->where('task_id', $request->task_id)->orderByDesc('created_at')->get();
     }
 
     /**

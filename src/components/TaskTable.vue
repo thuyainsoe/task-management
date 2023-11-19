@@ -159,9 +159,7 @@
                     </div>
                     <div v-for="file in responseFiles" :key="file.id" class="file-link">
                         <img src="../assets/svg-icons/faTextfile.svg" alt="" @click="downloadFile(file)">
-                        <a :href="`http://localhost:8000/api/files/${file.id}/download`">
-                            {{ file.file_name }}
-                        </a>
+                        {{ file.file_name }}
                     </div>
                     <div v-for="comment in responseComments" :key="comment.id" class="comment-text">
                         <img src="../assets/svg-icons/faMessageBlack.svg" alt="">
@@ -466,18 +464,10 @@ export default {
             this.updateText = ''
         },
         async downloadFile(file) {
-            console.log(file)
-            try {
-                let token = JSON.parse(localStorage.getItem('token')).value
-                const response = await axios.get(`http://localhost:8000/api/files/${file.id}/download`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                console.log(response,"this is response")
-            } catch (error) {
-                console.error(error)
-            }
+            const downloadURL = `http://localhost:8000/api/files/${file.id}/download`
+            const link = document.createElement('a');
+            link.href = downloadURL;
+            link.click()
         }
     },
     async mounted() {

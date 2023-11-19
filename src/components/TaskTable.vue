@@ -158,7 +158,7 @@
                         There are no comments as of now.
                     </div>
                     <div v-for="file in responseFiles" :key="file.id" class="file-link">
-                        <img src="../assets/svg-icons/faTextfile.svg" alt="">
+                        <img src="../assets/svg-icons/faTextfile.svg" alt="" @click="downloadFile(file)">
                         {{ file.file_name }}
                     </div>
                     <div v-for="comment in responseComments" :key="comment.id" class="comment-text">
@@ -443,7 +443,7 @@ export default {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
                 }
-            }).then(async(res) => {
+            }).then(async (res) => {
                 this.uploadStatus = 'File uploaded successfully'
                 this.file = null
                 await this.fetchFiles()
@@ -462,6 +462,20 @@ export default {
             await this.fetchFiles()
             await this.fetchComments()
             this.updateText = ''
+        },
+        async downloadFile(file) {
+            console.log(file)
+            try {
+                let token = JSON.parse(localStorage.getItem('token')).value
+                const response = await axios.get(`http://localhost:8000/api/files/${file.id}/download`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                console.log(response,"this is response")
+            } catch (error) {
+                console.error(error)
+            }
         }
     },
     async mounted() {

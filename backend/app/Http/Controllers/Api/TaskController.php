@@ -129,8 +129,12 @@ class TaskController extends Controller
             Comment::create($comment);
         }
 
-        if ($request->tags) {
-            $task->tags()->sync($request->tags);
+        if ($request->has('tags')) {
+            if (count($request->tags) > 0) {
+                $task->tags()->sync($request->tags);
+            } else {
+                $task->tags()->detach();
+            }
         }
 
         $user = auth()->user();

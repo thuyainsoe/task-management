@@ -62,7 +62,7 @@ class TaskController extends Controller
             $tasks = $tasks->where('priority', $request->priority);
         }
 
-        return $tasks->with('tags', 'assignment.assignedUser.department', 'assignment.assignedBy.department')->orderByDesc('updated_at')->get();
+        return $tasks->with('tags', 'assignment.assignedUser.department', 'assignment.assignedBy.department')->orderByDesc('created_at')->get();
     }
 
     /**

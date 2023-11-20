@@ -15,7 +15,7 @@ class NotificationController extends Controller
     {
         return Notification::where('user_id', auth()->id())
                                 ->orWhere('user_id', null)
-                                ->orderByDesc('updated_at')
+                                ->orderByDesc('created_at')
                                 ->get();
     }
 

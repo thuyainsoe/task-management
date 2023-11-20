@@ -202,8 +202,6 @@ export default {
         window.Echo.channel('task-updated')
             .listen('TaskUpdated', (data) => {
                 let noti_count = this.notiCount + 1;
-                console.log("Call by task updated")
-                console.log(noti_count);
                 this.$store.commit('notifications/setNotiCount', noti_count);
             });
 

@@ -140,7 +140,7 @@ class TaskController extends Controller
             Comment::create($comment);
         }
 
-        if ($request->has('tags') && $request->tags != null) {
+        if ($request->has('tags') && $request->tags !== null) {
             if (count($request->tags) > 0) {
                 $task->tags()->sync($request->tags);
             } else {

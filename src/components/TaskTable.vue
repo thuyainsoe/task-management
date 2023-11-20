@@ -346,7 +346,7 @@ export default {
         },
         updateTask(data) {
             let dueDate = this.changeDateFormat(data.due_date)
-            let tagsArray = this.cloneData.tags.length > 0 ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : []
+            let tagsArray = this.cloneData ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : null
             let variable = {
                 id: data.id,
                 status: data.status,

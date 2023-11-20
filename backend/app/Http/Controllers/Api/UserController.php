@@ -14,7 +14,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::query()->with('department')->get();
+        $users = User::query();
+        $authUser = auth()->user();
+
+        if($authUser->role != 'admin') {
+            $users = $users->where('department_id', $authUser->department_id);
+        }
+
+        return $users->with('department')->get();
     }
 
     /**
@@ -54,6 +61,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if(auth()->user()->role != 'admin') {
+            abort(403, 'Only admin can do it');
+        }
+        
         $user = User::findOrFail($request->id);
         $user->update($request->toArray());
 

@@ -21,6 +21,16 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $tasks = Task::query();
+
+        $authUser = auth()->user();
+        if($authUser->role != 'admin') {
+            $tasks = $tasks->whereHas('assignment', function($query) {
+                $query->whereHas('assignedUser', function($query) {
+                    $query->where('department_id', auth()->user()->department_id);
+                });
+            });
+        }
+
         if($request->search) {
             
             $tasks_id = Task::where('name', 'like', "%$request->search%")
@@ -130,7 +140,7 @@ class TaskController extends Controller
             Comment::create($comment);
         }
 
-        if ($request->has('tags')) {
+        if ($request->has('tags') && $request->tags != null) {
             if (count($request->tags) > 0) {
                 $task->tags()->sync($request->tags);
             } else {

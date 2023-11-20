@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -13,6 +14,13 @@ class NotificationController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::query();
+
+        if(auth()->user()->role != 'admin') {
+            $user_ids = User::query()->where('department_id', auth()->user()->department_id);
+            $notifications = $notifications->whereIn('user_id', $user_ids);
+        }
+        
         return Notification::where('user_id', auth()->id())
                                 ->orWhere('user_id', null)
                                 ->orderByDesc('created_at')

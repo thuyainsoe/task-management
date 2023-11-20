@@ -346,7 +346,7 @@ export default {
         },
         updateTask(data) {
             let dueDate = this.changeDateFormat(data.due_date)
-            let tagsArray = this.cloneData ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : null
+            let tagsArray = this.cloneData.tags ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : null
             let variable = {
                 id: data.id,
                 status: data.status,
@@ -413,7 +413,6 @@ export default {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                console.log(response)
                 this.responseComments = response.data
             } catch (error) {
                 console.error(error)
@@ -481,7 +480,7 @@ export default {
         isTagsDialog: {
             handler(value) {
                 if (value === false) {
-                    this.cloneData.tags = []
+                    this.cloneData.tags = null
                 }
             }
         }

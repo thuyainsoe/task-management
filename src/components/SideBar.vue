@@ -3,47 +3,56 @@
     <div class="side-bar-wrapper">
       <h3 class="side-bar-header">Departments</h3>
       <ul class="side-bar-lists">
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 0 }" @click="changeMenuTitle('All')">
+        <li v-if="isAdmin(0)" class="side-bar-list" :class="{ active: menuItemIndex === 0 }"
+          @click="changeMenuTitle('All')">
           <img v-if="menuItemIndex === 0" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">All</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 1 }" @click="changeMenuTitle('Adminstration')">
+        <li v-if="isAdmin(1)" class="side-bar-list" :class="{ active: menuItemIndex === 1 }"
+          @click="changeMenuTitle('Adminstration')">
           <img v-if="menuItemIndex === 1" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Adminstration</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 2 }" @click="changeMenuTitle('Admissions')">
+        <li v-if="isAdmin(2)" class="side-bar-list" :class="{ active: menuItemIndex === 2 }"
+          @click="changeMenuTitle('Admissions')">
           <img v-if="menuItemIndex === 2" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Admissions</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 3 }" @click="changeMenuTitle('Communications')">
+        <li v-if="isAdmin(3)" class="side-bar-list" :class="{ active: menuItemIndex === 3 }"
+          @click="changeMenuTitle('Communications')">
           <img v-if="menuItemIndex === 3" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Communications</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 4 }" @click="changeMenuTitle('IT')">
+        <li v-if="isAdmin(4)" class="side-bar-list" :class="{ active: menuItemIndex === 4 }"
+          @click="changeMenuTitle('IT')">
           <img v-if="menuItemIndex === 4" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">IT</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 5 }" @click="changeMenuTitle('Student Affairs')">
+        <li v-if="isAdmin(5)" class="side-bar-list" :class="{ active: menuItemIndex === 5 }"
+          @click="changeMenuTitle('Student Affairs')">
           <img v-if="menuItemIndex === 5" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Student Affairs</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 6 }" @click="changeMenuTitle('Facilities')">
+        <li v-if="isAdmin(6)" class="side-bar-list" :class="{ active: menuItemIndex === 6 }"
+          @click="changeMenuTitle('Facilities')">
           <img v-if="menuItemIndex === 6" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Facilities</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 7 }" @click="changeMenuTitle('Trannsportation')">
+        <li v-if="isAdmin(7)" class="side-bar-list" :class="{ active: menuItemIndex === 7 }"
+          @click="changeMenuTitle('Trannsportation')">
           <img v-if="menuItemIndex === 7" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Trannsportation</span>
         </li>
-        <li class="side-bar-list" :class="{ active: menuItemIndex === 8 }" @click="changeMenuTitle('Food Service')">
+        <li v-if="isAdmin(8)" class="side-bar-list" :class="{ active: menuItemIndex === 8 }"
+          @click="changeMenuTitle('Food Service')">
           <img v-if="menuItemIndex === 8" src="../assets/svg-icons/faFolderOpen.svg" alt="">
           <img v-else src="../assets/svg-icons/faFolder.svg" alt="">
           <span class="side-bar-dept-name">Food Service</span>
@@ -63,6 +72,12 @@ export default {
   computed: {
     departmentIndex() {
       return this.$store.getters['tasks/departmentIndex']
+    },
+    userDeptId() {
+      return JSON.parse(localStorage.getItem('token')).authUser.department_id;
+    },
+    userRole() {
+      return JSON.parse(localStorage.getItem('token')).authUser.role
     }
   },
   methods: {
@@ -104,7 +119,7 @@ export default {
           this.$store.dispatch('tasks/fetchTasks')
           break;
         case 'Trannsportation':
-          this.menuItemIndex = 7;
+          this.menuItemIndex = this.isAdmin(7) ? 7 : '';
           this.$store.commit('tasks/setDepartmentIndex', 7)
           this.$store.dispatch('tasks/fetchTasks')
           break;
@@ -114,7 +129,16 @@ export default {
           this.$store.dispatch('tasks/fetchTasks')
           break;
       }
+    },
+    isAdmin(index) {
+      if (this.userRole === 'admin' || this.userDeptId === index) {
+        return true;
+      }
+      return false;
     }
+  },
+  mounted() {
+    this.menuItemIndex = this.userRole === 'admin' ? 0 : this.userDeptId;
   }
 }
 </script>

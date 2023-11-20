@@ -66,7 +66,7 @@
                     <img src="../assets/svg-icons/faDepartment.svg" alt="">
                     Department
                 </span>
-                : <el-select v-model="authUser.department_id" class="department-selector" @change="updateUser">
+                : <el-select v-model="authUser.department_id" class="department-selector" @change="updateUser" :disabled="userRole === 'guest'">
                     <el-option v-for="department in departments" :key="department.id" :label="department.name"
                         :value="department.id" />
                 </el-select>

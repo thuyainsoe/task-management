@@ -79,6 +79,13 @@
                         @click="remarkClick(scope.row)">
                         <img src="../assets/svg-icons/faMessage.svg" alt="">
                     </div>
+                    <div v-else-if="tableColumn.property === 'delete'" class="table-data-delete">
+                        <el-popconfirm title="Are you sure to delete this?" @confirm="deleteTask(scope.row)">
+                            <template #reference>
+                                <img src="../assets/svg-icons/faDelete.svg" alt="">
+                            </template>
+                        </el-popconfirm>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -143,7 +150,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button type="primary"
-                        @click="updateTask(cloneData), isTagsDialog = !isTagsDialog">Confirm</el-button>
+                        @click="updateTask(cloneData, 'istag'), isTagsDialog = !isTagsDialog">Confirm</el-button>
                     <el-button @click="isTagsDialog = false">Cancel</el-button>
                 </span>
             </template>
@@ -265,6 +272,11 @@ export default {
                     label: 'Remark',
                     property: 'remark',
                     width: 100
+                },
+                {
+                    label: 'Delete',
+                    property: 'delete',
+                    width: 70
                 }
             ],
             statusOptions: [
@@ -325,6 +337,9 @@ export default {
         isAdmin() {
             return JSON.parse(localStorage.getItem('token')).authUser.role === 'admin';
         },
+        currentUsername() {
+            return JSON.parse(localStorage.getItem('token')).authUser.name
+        },
         tasksLoading() {
             return this.$store.getters['tasks/tasksLoading']
         },
@@ -344,9 +359,12 @@ export default {
         deleteSingleTag(tag) {
             this.cloneData.tags = this.cloneData.tags.filter((cloneTag) => cloneTag.id !== tag.id)
         },
-        updateTask(data) {
+        updateTask(data, type) {
             let dueDate = this.changeDateFormat(data.due_date)
-            let tagsArray = this.cloneData.tags ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : null
+            let tagsArray = null
+            if (type === 'istag') {
+                tagsArray = this.cloneData.tags ? this.cloneData.tags.map((cloneTag) => cloneTag.id) : null
+            }
             let variable = {
                 id: data.id,
                 status: data.status,
@@ -461,7 +479,7 @@ export default {
             this.uploadStatus = event.target.files[0].name
         },
         async clickUpdateText() {
-            await this.$store.dispatch('tasks/updateComment', { comment: this.updateText, id: this.cloneData.id })
+            await this.$store.dispatch('tasks/updateComment', { comment: `${this.currentUsername} :: ${this.updateText}`, id: this.cloneData.id })
             await this.fetchFiles()
             await this.fetchComments()
             this.updateText = ''
@@ -471,9 +489,33 @@ export default {
             const link = document.createElement('a');
             link.href = downloadURL;
             link.click()
+        },
+        async deleteTask(data) {
+            try {
+                let token = JSON.parse(localStorage.getItem('token')).value
+                const response = await axios.delete(`http://localhost:8000/api/tasks/${data.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                ElNotification({
+                    title: 'Success',
+                    message: 'Task is successfully deleted.',
+                    type: 'success',
+                    duration: 2000
+                })
+                this.$store.dispatch('tasks/fetchTasks')
+            } catch (error) {
+                console.error(error)
+            }
         }
     },
     async mounted() {
+        if (!this.isAdmin) {
+            this.tableColumns = this.tableColumns.filter((column) => {
+                return column.property !== 'delete'
+            })
+        }
         this.$store.dispatch('tasks/fetchTasks')
     },
     watch: {
@@ -686,7 +728,8 @@ export default {
             }
         }
 
-        .table-data-remark {
+        .table-data-remark,
+        .table-data-delete {
             cursor: pointer;
         }
     }

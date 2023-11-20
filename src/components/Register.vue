@@ -15,6 +15,12 @@
                 <input type="password" placeholder="Reenter-Password" required v-model="re_password"
                     @focus="errMessage = null">
             </div>
+            <div class="register-item-select">
+                <el-select v-model="department_id" class="department-selector" @change="updateUser">
+                    <el-option v-for="department in departments" :key="department.id" :label="department.name"
+                        :value="department.id" />
+                </el-select>
+            </div>
             <span v-if="errMessage" class="err-message">{{ errMessage }}</span>
             <div class="register-button">
                 <button>Sign Up</button>
@@ -29,6 +35,7 @@
 <script>
 import LogoHeader from './LogoHeader.vue';
 import axios from 'axios';
+import departments from '../data/departments';
 import { ElNotification } from 'element-plus'
 
 export default {
@@ -39,8 +46,14 @@ export default {
             email: '',
             password: '',
             re_password: '',
+            department_id: 1,
             errMessage: null
         }
+    },
+    computed: {
+        departments() {
+            return departments
+        },
     },
     methods: {
         async registerSubmit() {
@@ -59,7 +72,7 @@ export default {
                         password: this.password,
                         username: `https://ui-avatars.com/api/?name=${avator}`,
                         role: 'guest',
-                        department_id: 1,
+                        department_id: this.department_id,
                         position: ''
                     });
                     ElNotification({
@@ -110,6 +123,13 @@ export default {
                 outline: none;
                 border: none;
                 border-bottom: 1px solid #000;
+            }
+        }
+
+        .register-item-select {
+            width: 100%;
+            .department-selector {
+                width: 100%;
             }
         }
 

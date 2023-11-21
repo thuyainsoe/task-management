@@ -4,7 +4,7 @@ Make sure you have Node.js version 18.12.1 or higher installed for this project.
 
 ## Getting Started
 
-1. **Installation:** Navigate to the 'task-management-main' directory in your terminal/console.
+1. **Installation:** Navigate to the 'task-management' directory in your terminal/console.
     ```sh
     npm install
     ```

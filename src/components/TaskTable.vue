@@ -8,7 +8,8 @@
                 <template v-slot="scope">
                     <div v-if="tableColumn.property === 'task_name'"><span>{{ scope.row.name }}</span></div>
                     <div v-if="tableColumn.property === 'task_description'"><span>{{ scope.row.description }}</span></div>
-                    <div v-else-if="tableColumn.property === 'person'" class="table-data-person">
+                    <div v-else-if="tableColumn.property === 'person'" class="table-data-person"
+                        @click="clickUserDetail(scope.row.assignment.assigned_user)">
                         <img :src="scope.row.assignment.assigned_user.username" alt="">
                         <div class="person-detail">
                             <span class="person-name">{{ scope.row.assignment ? scope.row.assignment.assigned_user.name :
@@ -157,7 +158,6 @@
         </el-dialog>
 
         <!-- Remark Drawer -->
-        <!-- :title="cloneData.description" -->
         <el-drawer v-model="remarkDrawer" :title="cloneData ? cloneData.description : ''" direction="rtl">
             <div class="remark-wrapper">
                 <div class="remark-person-detail">
@@ -199,12 +199,15 @@
                 </div>
             </div>
         </el-drawer>
+
+        <UserDetailDialog :userDetail="cloneUser" ref="userDetailDialog" />
     </div>
 </template>
 
 <script>
 import tagsOptions from '../data/tagsOptions';
 import { ElNotification } from 'element-plus'
+import UserDetailDialog from './UserDetailDialog.vue';
 import axios from 'axios'
 
 export default {
@@ -213,6 +216,7 @@ export default {
             isAssignedByDialog: false,
             isTagsDialog: false,
             cloneData: null,
+            cloneUser: null,
             tagInput: '',
             updateText: '',
             remarkDrawer: false,
@@ -314,6 +318,9 @@ export default {
                 },
             ],
         }
+    },
+    components: {
+        UserDetailDialog
     },
     computed: {
         getStatusClass() {
@@ -507,6 +514,12 @@ export default {
                 this.$store.dispatch('tasks/fetchTasks')
             } catch (error) {
                 console.error(error)
+            }
+        },
+        clickUserDetail(user) {
+            if (this.isAdmin) {
+                this.cloneUser = { ...user }
+                this.$refs.userDetailDialog.showUserDetailDialog()
             }
         }
     },

@@ -1,41 +1,23 @@
-# task-management
+# Task Management
 
-This template should help get you started developing with Vue 3 in Vite.
+Make sure you have Node.js version 18.12.1 or higher installed for this project.
 
-## Recommended IDE Setup
+## Getting Started
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+1. **Installation:** Navigate to the 'task-management-main' directory in your terminal/console.
+    ```sh
+    npm install
+    ```
 
-## Customize configuration
+2. **Development Server:** Once the installation is complete, initiate the development server.
+    ```sh
+    npm run dev
+    ```
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## IDE Setup
 
-## Project Setup
+For an enhanced development experience, consider using:
 
-```sh
-npm install
-```
+- [VSCode](https://code.visualstudio.com/) with [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur) and [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Refer to the [Vite Configuration Reference](https://vitejs.dev/config/) for customizing the configuration.

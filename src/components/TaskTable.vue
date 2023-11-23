@@ -158,13 +158,13 @@
         </el-dialog>
 
         <!-- Remark Drawer -->
-        <el-drawer v-model="remarkDrawer" :title="cloneData ? cloneData.description : ''" direction="rtl">
+        <el-drawer v-model="remarkDrawer" :title="cloneData ? cloneData.description : ''" direction="rtl" >
             <div class="remark-wrapper">
                 <div class="remark-person-detail">
                     <img :src="cloneData.assignment.assigned_user.username" alt="">
                     <p>{{ cloneData.assignment.assigned_user.name }}</p>
                 </div>
-                <div class="remark-detail-show-container">
+                <div class="remark-detail-show-container" v-loading="remarkLoading">
                     <div v-if="responseFiles.length < 1 && responseComments.length < 1" class="no-file-desc">
                         There are no comments as of now.
                     </div>
@@ -214,6 +214,7 @@ export default {
     data() {
         return {
             isAssignedByDialog: false,
+            remarkLoading: false,
             isTagsDialog: false,
             cloneData: null,
             cloneUser: null,
@@ -486,9 +487,11 @@ export default {
             this.uploadStatus = event.target.files[0].name
         },
         async clickUpdateText() {
+            this.remarkLoading = true
             await this.$store.dispatch('tasks/updateComment', { comment: `${this.currentUsername} :: ${this.updateText}`, id: this.cloneData.id })
             await this.fetchFiles()
             await this.fetchComments()
+            this.remarkLoading = false
             this.updateText = ''
         },
         async downloadFile(file) {

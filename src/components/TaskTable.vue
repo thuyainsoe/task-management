@@ -62,7 +62,7 @@
                         </span>
                         <span class="table-add-task" v-if="scope.row.tags.length < 1">
                             <img src="../assets/svg-icons/faAdd.svg" alt="">
-                            Add new task
+                            Add new tags
                         </span>
                     </div>
                     <div v-else-if="tableColumn.property === 'assigned_by'" class="table-data-assigned-by"
